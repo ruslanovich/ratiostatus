@@ -6,7 +6,7 @@ import type {
   RivalProject,
 } from "../../game-core/domain";
 
-export interface ProvisionalArchetypeContent {
+export interface MinimalArchetypeContent {
   readonly projectId: CivilizationalProject["id"];
   readonly role: "player";
   readonly archetype: Archetype;
@@ -14,6 +14,8 @@ export interface ProvisionalArchetypeContent {
   readonly factions: readonly Faction[];
   readonly metrics: CivilizationalProject["metrics"];
 }
+
+export type ProvisionalArchetypeContent = MinimalArchetypeContent;
 
 export interface ProvisionalRivalContent {
   readonly project: RivalProject;

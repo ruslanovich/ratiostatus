@@ -29,4 +29,6 @@ The structured contract uses the action `kind` as a discriminator. Every action 
 
 The current development loop exposes a small manual-first option set derived from the current state. Increase and decrease doctrine shifts target the player's first ideology axis and can be submitted once. Institution-building and détente appear as disabled structured placeholders with an explicit resolver-support reason. Their presence demonstrates the action-selection contract; it does not make their consequences available.
 
+The content layer now provides five provisional abstract starting archetypes with distinct initial ideology, institutions, factions, and project metrics. Each can initialize a valid state through a content helper, while the existing development loop still starts deterministically from the original provisional civic compact. Archetype selection UI and session-lifecycle selection remain deferred.
+
 Separately, Task 9.2 provides a headless scripted proof that applies ten fixed doctrine shifts through the public turn resolver and records the resulting history. It demonstrates deterministic in-memory turn progression only; it is not the complete playable 10–12 turn loop and adds no events, rivals, endings, or session UI.

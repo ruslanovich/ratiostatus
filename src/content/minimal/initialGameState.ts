@@ -4,14 +4,20 @@ import {
   type GameState,
 } from "../../game-core/domain";
 import { provisionalArchetype } from "./provisionalArchetype";
+import { getMinimalArchetypeById, minimalArchetypes } from "./archetypeCatalog";
 import { provisionalRival } from "./provisionalRival";
 import type { MinimalContent } from "./types";
-import { assertValidMinimalContent } from "./validation";
+import {
+  assertValidMinimalArchetypeCatalog,
+  assertValidMinimalContent,
+} from "./validation";
 
 export const minimalContent = {
   archetype: provisionalArchetype,
   rival: provisionalRival,
 } as const satisfies MinimalContent;
+
+assertValidMinimalArchetypeCatalog(minimalArchetypes);
 
 export function createMinimalInitialGameState(
   content: MinimalContent = minimalContent,
@@ -43,4 +49,19 @@ export function createMinimalInitialGameState(
 
   assertValidGameState(state);
   return state;
+}
+
+export function createMinimalInitialGameStateForArchetype(
+  archetypeId: Parameters<typeof getMinimalArchetypeById>[0],
+): GameState {
+  const archetype = getMinimalArchetypeById(archetypeId);
+
+  if (archetype === undefined) {
+    throw new Error(`Unknown minimal archetype ID: ${archetypeId}`);
+  }
+
+  return createMinimalInitialGameState({
+    archetype,
+    rival: provisionalRival,
+  });
 }

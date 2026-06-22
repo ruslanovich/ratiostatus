@@ -1,20 +1,136 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  assertValidMinimalArchetype,
+  assertValidMinimalArchetypeCatalog,
   assertValidMinimalContent,
   createMinimalInitialGameState,
+  createMinimalInitialGameStateForArchetype,
+  getMinimalArchetypeById,
+  minimalArchetypes,
   minimalContent,
 } from "../src/content";
 import type { MinimalContent } from "../src/content";
-import type { PlayerAction } from "../src/game-core/domain";
+import {
+  assertValidGameState,
+  type ArchetypeId,
+  type PlayerAction,
+} from "../src/game-core/domain";
 import { resolveDoctrineShift } from "../src/game-core/simulation";
 
-describe("minimal provisional content", () => {
-  it("validates the single archetype and rival fixture", () => {
+describe("minimal archetype content", () => {
+  it("validates the default archetype and rival fixture", () => {
     expect(() => assertValidMinimalContent(minimalContent)).not.toThrow();
     expect(minimalContent.archetype.archetype.id).toMatch(/^archetype:/);
     expect(minimalContent.archetype.projectId).toMatch(/^project:/);
     expect(minimalContent.rival.project.id).toMatch(/^project:rival-/);
+  });
+
+  it("provides at least five archetypes with unique archetype and project IDs", () => {
+    const archetypeIds = minimalArchetypes.map(({ archetype }) => archetype.id);
+    const projectIds = minimalArchetypes.map(({ projectId }) => projectId);
+
+    expect(minimalArchetypes.length).toBeGreaterThanOrEqual(5);
+    expect(new Set(archetypeIds).size).toBe(archetypeIds.length);
+    expect(new Set(projectIds).size).toBe(projectIds.length);
+    expect(() => assertValidMinimalArchetypeCatalog(minimalArchetypes)).not.toThrow();
+  });
+
+  it("validates every archetype and all local references", () => {
+    for (const content of minimalArchetypes) {
+      const institutionIds = new Set(content.institutions.map(({ id }) => id));
+      const factionIds = new Set(content.factions.map(({ id }) => id));
+
+      expect(() => assertValidMinimalArchetype(content)).not.toThrow();
+      expect(content.archetype.initialIdeology.axes.length).toBeGreaterThan(0);
+      expect(content.institutions.length).toBeGreaterThan(0);
+      expect(content.factions.length).toBeGreaterThan(0);
+
+      for (const id of content.archetype.initialInstitutionIds) {
+        expect(institutionIds.has(id)).toBe(true);
+      }
+      for (const id of content.archetype.initialFactionIds) {
+        expect(factionIds.has(id)).toBe(true);
+      }
+      for (const faction of content.factions) {
+        for (const id of faction.institutionIds) {
+          expect(institutionIds.has(id)).toBe(true);
+        }
+      }
+    }
+  });
+
+  it("provides complete bounded project and faction metric records", () => {
+    const projectMetricKeys = [
+      "innovation",
+      "legitimacy",
+      "mobilization",
+      "productivity",
+    ];
+    const factionMetricKeys = [
+      "loyalty",
+      "power",
+      "radicalization",
+      "support",
+      "visibility",
+    ];
+
+    for (const content of minimalArchetypes) {
+      expect(Object.keys(content.metrics).sort()).toEqual(projectMetricKeys);
+      for (const value of Object.values(content.metrics)) {
+        expect(value).toBeGreaterThanOrEqual(0);
+        expect(value).toBeLessThanOrEqual(100);
+      }
+
+      for (const faction of content.factions) {
+        expect(Object.keys(faction.metrics).sort()).toEqual(factionMetricKeys);
+        for (const value of Object.values(faction.metrics)) {
+          expect(value).toBeGreaterThanOrEqual(0);
+          expect(value).toBeLessThanOrEqual(100);
+        }
+      }
+    }
+  });
+
+  it("is mechanically varied across ideology, metrics, and institution categories", () => {
+    const ideologyProfiles = new Set(
+      minimalArchetypes.map(({ archetype }) =>
+        JSON.stringify(archetype.initialIdeology),
+      ),
+    );
+    const metricProfiles = new Set(
+      minimalArchetypes.map(({ metrics }) => JSON.stringify(metrics)),
+    );
+    const institutionCategories = new Set(
+      minimalArchetypes.flatMap(({ institutions }) =>
+        institutions.map(({ category }) => category),
+      ),
+    );
+
+    expect(ideologyProfiles.size).toBeGreaterThanOrEqual(2);
+    expect(metricProfiles.size).toBeGreaterThanOrEqual(3);
+    expect(institutionCategories.size).toBeGreaterThanOrEqual(3);
+  });
+
+  it("looks up archetypes and initializes a valid state for every catalog entry", () => {
+    for (const content of minimalArchetypes) {
+      expect(getMinimalArchetypeById(content.archetype.id)).toBe(content);
+
+      const state = createMinimalInitialGameStateForArchetype(content.archetype.id);
+      expect(state.playerProject.id).toBe(content.projectId);
+      expect(state.playerProject.originArchetypeId).toBe(content.archetype.id);
+      expect(state.playerProject.ideology).toEqual(content.archetype.initialIdeology);
+      expect(state.rivalProjects).toEqual([minimalContent.rival.project]);
+      expect(() => assertValidGameState(state)).not.toThrow();
+    }
+  });
+
+  it("rejects an unknown archetype ID with a clear error", () => {
+    expect(() =>
+      createMinimalInitialGameStateForArchetype(
+        "archetype:unknown-start" as ArchetypeId,
+      ),
+    ).toThrow("Unknown minimal archetype ID: archetype:unknown-start");
   });
 
   it("rejects an out-of-bounds ideology position", () => {
@@ -97,6 +213,13 @@ describe("minimal provisional content", () => {
         expect(value).toBeLessThanOrEqual(100);
       }
     }
+  });
+
+  it("keeps default initialization deterministic and on the provisional archetype", () => {
+    expect(createMinimalInitialGameState()).toEqual(createMinimalInitialGameState());
+    expect(createMinimalInitialGameState().playerProject.originArchetypeId).toBe(
+      minimalContent.archetype.archetype.id,
+    );
   });
 
   it("works with the existing doctrine-shift resolver", () => {

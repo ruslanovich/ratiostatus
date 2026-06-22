@@ -8,7 +8,28 @@ import {
   assertSignedPercentage,
   assertStableId,
 } from "../../game-core/domain";
-import type { MinimalContent } from "./types";
+import type { MinimalArchetypeContent, MinimalContent } from "./types";
+
+const INSTITUTION_CATEGORIES = new Set([
+  "governance",
+  "economic",
+  "social",
+  "security",
+  "cultural",
+]);
+const PROJECT_METRICS = [
+  "legitimacy",
+  "productivity",
+  "innovation",
+  "mobilization",
+] as const;
+const FACTION_METRICS = [
+  "power",
+  "support",
+  "loyalty",
+  "visibility",
+  "radicalization",
+] as const;
 
 function assertId(value: string, prefix: string): void {
   assertStableId(value, prefix, "Minimal content ID");
@@ -37,6 +58,9 @@ function assertInstitutions(institutions: readonly Institution[], field: string)
   return new Set(
     institutions.map((institution) => {
       assertId(institution.id, "institution");
+      if (!INSTITUTION_CATEGORIES.has(institution.category)) {
+        throw new Error(`${field} institution category is invalid`);
+      }
       assertPercentage(institution.strength, `${field} institution strength`);
       for (const ruleId of institution.ruleReferences) {
         assertId(ruleId, "rule");
@@ -61,8 +85,8 @@ function assertFactions(
       for (const interestId of faction.interests) {
         assertId(interestId, "interest");
       }
-      for (const [metric, value] of Object.entries(faction.metrics)) {
-        assertPercentage(value, `${field} faction ${metric}`);
+      for (const metric of FACTION_METRICS) {
+        assertPercentage(faction.metrics[metric], `${field} faction ${metric}`);
       }
       for (const institutionId of faction.institutionIds) {
         if (!institutionIds.has(institutionId)) {
@@ -78,19 +102,34 @@ function assertMetrics(
   metrics: MinimalContent["archetype"]["metrics"],
   field: string,
 ): void {
-  for (const [metric, value] of Object.entries(metrics)) {
-    assertPercentage(value, `${field} ${metric}`);
+  for (const metric of PROJECT_METRICS) {
+    assertPercentage(metrics[metric], `${field} ${metric}`);
   }
 }
 
 export function assertValidMinimalContent(content: MinimalContent): void {
   const { archetype, rival } = content;
 
-  if (archetype.role !== "player") {
-    throw new Error("Minimal archetype project role must be player");
-  }
+  assertValidMinimalArchetype(archetype);
+
   if (rival.project.role !== "rival") {
     throw new Error("Minimal rival project role must be rival");
+  }
+
+  assertId(rival.project.id, "project");
+  assertId(rival.project.decisionPolicyId, "rival-policy");
+  assertId(rival.project.originArchetypeId, "archetype");
+  assertIdeology(rival.project.ideology, "Minimal rival");
+  const rivalInstitutionIds = assertInstitutions(rival.project.institutions, "Minimal rival");
+  assertFactions(rival.project.factions, rivalInstitutionIds, "Minimal rival");
+  assertMetrics(rival.project.metrics, "Minimal rival metric");
+}
+
+export function assertValidMinimalArchetype(
+  archetype: MinimalArchetypeContent,
+): void {
+  if (archetype.role !== "player") {
+    throw new Error("Minimal archetype project role must be player");
   }
 
   assertId(archetype.projectId, "project");
@@ -120,14 +159,27 @@ export function assertValidMinimalContent(content: MinimalContent): void {
     assertId(ruleId, "rule");
   }
   assertMetrics(archetype.metrics, "Minimal archetype metric");
+}
 
-  assertId(rival.project.id, "project");
-  assertId(rival.project.decisionPolicyId, "rival-policy");
-  if (rival.project.originArchetypeId !== archetype.archetype.id) {
-    throw new Error("Minimal rival must reference the available archetype");
+export function assertValidMinimalArchetypeCatalog(
+  archetypes: readonly MinimalArchetypeContent[],
+): void {
+  if (archetypes.length < 5) {
+    throw new Error("Minimal archetype catalog must contain at least five archetypes");
   }
-  assertIdeology(rival.project.ideology, "Minimal rival");
-  const rivalInstitutionIds = assertInstitutions(rival.project.institutions, "Minimal rival");
-  assertFactions(rival.project.factions, rivalInstitutionIds, "Minimal rival");
-  assertMetrics(rival.project.metrics, "Minimal rival metric");
+
+  const archetypeIds = new Set<string>();
+  const projectIds = new Set<string>();
+
+  for (const archetype of archetypes) {
+    assertValidMinimalArchetype(archetype);
+    if (archetypeIds.has(archetype.archetype.id)) {
+      throw new Error(`Duplicate archetype ID ${archetype.archetype.id}`);
+    }
+    if (projectIds.has(archetype.projectId)) {
+      throw new Error(`Duplicate archetype project ID ${archetype.projectId}`);
+    }
+    archetypeIds.add(archetype.archetype.id);
+    projectIds.add(archetype.projectId);
+  }
 }

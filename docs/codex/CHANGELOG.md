@@ -1,5 +1,12 @@
 # Codex Changelog
 
+## 2026-06-22 — Five starting archetypes
+
+- Expanded the minimal content layer to a readonly catalog of five mechanically distinct abstract starting archetypes while retaining the original provisional civic compact as the deterministic default.
+- Added catalog lookup and archetype-specific state initialization with clear unknown-ID rejection, the unchanged provisional rival, content validation, and final core `GameState` validation.
+- Added focused uniqueness, bounds, required metric shape, local reference integrity, mechanical-variety, per-archetype initialization, default determinism, and scripted-session compatibility coverage.
+- Documented the catalog shape, provisional abstract naming, content/core boundary, validation behavior, and deferred selection UI, rival expansion, gameplay rules, and balancing.
+
 ## 2026-06-22 — Scripted ten-turn headless session
 
 - Added a pure content-independent session runner that validates an initial state, applies ordered player actions through `resolveTurn`, and returns the initial state, final state, and ordered turn results without mutating inputs.
