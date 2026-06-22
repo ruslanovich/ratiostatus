@@ -5,6 +5,11 @@ import type {
   TurnResult,
   TurnResultId,
 } from "../domain";
+import {
+  assertValidGameState,
+  assertValidPlayerAction,
+  assertValidTurnResult,
+} from "../domain";
 
 const DEFAULT_DOCTRINE_SHIFT_INTENSITY = 10;
 const IDEOLOGY_POSITION_MAX = 100;
@@ -22,6 +27,9 @@ export function resolveDoctrineShift(
   state: GameState,
   action: PlayerAction,
 ): DoctrineShiftResolution {
+  assertValidGameState(state);
+  assertValidPlayerAction(action, state);
+
   if (action.kind !== "shift_doctrine") {
     throw new Error("Doctrine shift resolver only accepts shift_doctrine actions");
   }
@@ -46,7 +54,7 @@ export function resolveDoctrineShift(
     axis.position + intensity,
   ) as SignedPercentage;
   const nextTurn = state.turn + 1;
-  const resultId = `turn-result:${state.id}:${nextTurn}:${action.id}` as TurnResultId;
+  const resultId = `turn-result:${state.id.slice("game:".length)}-${nextTurn}-${action.id.slice("action:".length)}` as TurnResultId;
 
   const result: TurnResult = {
     id: resultId,
@@ -56,7 +64,7 @@ export function resolveDoctrineShift(
     changes: [
       {
         target: { kind: "project", id: state.playerProject.id },
-        field: `state-field:ideology-axis-position:${axis.id}`,
+        field: `state-field:ideology-axis-position-${axis.id.slice("ideology-axis:".length)}`,
         before: axis.position,
         after: nextPosition,
         causes: [{ kind: "action", id: action.id }],
@@ -78,6 +86,9 @@ export function resolveDoctrineShift(
     },
     history: [...state.history, resultId],
   };
+
+  assertValidGameState(nextState);
+  assertValidTurnResult(result);
 
   return { state: nextState, result };
 }

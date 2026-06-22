@@ -10,7 +10,7 @@ export type InstitutionCategory =
 export interface Institution {
   readonly id: InstitutionId;
   readonly category: InstitutionCategory;
-  /** Inclusive range 0..100; validated at runtime beginning in Task 2.2. */
+  /** Inclusive range 0..100; validated at runtime at core boundaries. */
   readonly strength: Percentage;
   readonly ruleReferences: readonly RuleReferenceId[];
 }

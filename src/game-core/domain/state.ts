@@ -37,7 +37,7 @@ export interface CivilizationalProject {
   readonly factions: readonly Faction[];
   readonly contradictions: readonly Contradiction[];
   readonly relations: readonly ExternalRelation[];
-  /** Every metric is in the inclusive range 0..100; runtime validation begins in Task 2.2. */
+  /** Every metric is in the inclusive range 0..100; validated at runtime at core boundaries. */
   readonly metrics: Readonly<Record<CoreMetricName, Percentage>>;
 }
 

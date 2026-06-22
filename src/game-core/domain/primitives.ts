@@ -1,4 +1,4 @@
-/** A stable identifier scoped by a domain namespace. Runtime format validation is deferred to Task 2.2. */
+/** A stable identifier scoped by a domain namespace and validated at runtime at core boundaries. */
 export type StableId<Namespace extends string> = `${Namespace}:${string}`;
 
 export type GameId = StableId<"game">;
@@ -21,16 +21,16 @@ export type RuleReferenceId = StableId<"rule">;
 export type RivalPolicyId = StableId<"rival-policy">;
 export type StateFieldId = StableId<"state-field">;
 
-/** Integer turn boundary in the inclusive range 0..12. Runtime validation is deferred to Task 2.2. */
+/** Integer turn boundary in the inclusive range 0..12. */
 export type TurnNumber = number;
 
-/** Configured session length in the inclusive range 10..12. Runtime validation is deferred to Task 2.2. */
+/** Configured session length in the inclusive range 10..12. */
 export type TurnLimit = number;
 
-/** Numeric percentage in the inclusive range 0..100. Runtime validation is deferred to Task 2.2. */
+/** Numeric percentage in the inclusive range 0..100. */
 export type Percentage = number;
 
-/** Signed position in the inclusive range -100..100. Runtime validation is deferred to Task 2.2. */
+/** Signed position in the inclusive range -100..100. */
 export type SignedPercentage = number;
 
 export type ProjectRole = "player" | "rival";

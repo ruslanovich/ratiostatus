@@ -15,7 +15,7 @@ export type FactionMetricName =
 export interface Faction {
   readonly id: FactionId;
   readonly interests: readonly InterestId[];
-  /** Every metric is in the inclusive range 0..100; runtime validation begins in Task 2.2. */
+  /** Every metric is in the inclusive range 0..100; validated at runtime at core boundaries. */
   readonly metrics: Readonly<Record<FactionMetricName, Percentage>>;
   readonly institutionIds: readonly InstitutionId[];
 }

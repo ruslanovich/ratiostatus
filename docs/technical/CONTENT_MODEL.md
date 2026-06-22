@@ -28,7 +28,7 @@ Content supplies validated data and explanatory language to the deterministic ru
 
 The fixture is configuration only. It imports type contracts from `game-core`, while `game-core` does not import content. It contains no consequences, decision logic, events, contradictions, endings, or presentation identity. The rival currently references the sole available archetype as its origin because Task 4.1 adds exactly one archetype; mechanically distinct rival archetypes remain deferred.
 
-`assertValidMinimalContent()` is a small local assertion layer for this fixture, not the general Task 2.2 domain validator. It checks:
+`assertValidMinimalContent()` remains a small content-specific assertion layer for this fixture. It delegates generic stable-ID and numeric-bound checks to the Task 2.2 core validators and retains fixture/catalog checks that do not belong to the generic domain boundary. It checks:
 
 - expected stable-ID namespaces and non-empty identifiers;
 - player and rival roles;
@@ -38,4 +38,4 @@ The fixture is configuration only. It imports type contracts from `game-core`, w
 - archetype and faction references against available institutions and factions;
 - the rival origin against the one available archetype.
 
-The initializer validates before constructing state. Full schemas, catalog versioning, reusable state-boundary validation, additional archetypes and rivals, authoring tools, and content validation commands remain deferred to their assigned tasks. The current identifiers and all identity terms other than **Ratio Status** are provisional.
+The initializer validates content before construction and asserts the constructed state through `assertValidGameState()` before returning it. Full content schemas, catalog versioning, additional archetypes and rivals, authoring tools, and content validation commands remain deferred to their assigned tasks. The current identifiers and all identity terms other than **Ratio Status** are provisional.

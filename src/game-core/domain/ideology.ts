@@ -6,7 +6,7 @@ import type {
 
 export interface IdeologyAxis {
   readonly id: IdeologyAxisId;
-  /** Inclusive range -100..100; validated at runtime beginning in Task 2.2. */
+  /** Inclusive range -100..100; validated at runtime at core boundaries. */
   readonly position: SignedPercentage;
 }
 

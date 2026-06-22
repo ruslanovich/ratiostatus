@@ -2,22 +2,16 @@ import type {
   Faction,
   IdeologyProfile,
   Institution,
-  Percentage,
+} from "../../game-core/domain";
+import {
+  assertPercentage,
+  assertSignedPercentage,
+  assertStableId,
 } from "../../game-core/domain";
 import type { MinimalContent } from "./types";
 
 function assertId(value: string, prefix: string): void {
-  const pattern = new RegExp(`^${prefix}:[a-z0-9]+(?:-[a-z0-9]+)*$`);
-
-  if (!pattern.test(value)) {
-    throw new Error(`Expected stable ${prefix}: ID, received ${value}`);
-  }
-}
-
-function assertPercentage(value: Percentage, field: string): void {
-  if (!Number.isFinite(value) || value < 0 || value > 100) {
-    throw new Error(`${field} must be within 0..100`);
-  }
+  assertStableId(value, prefix, "Minimal content ID");
 }
 
 function assertIdeology(profile: IdeologyProfile, field: string): void {
@@ -27,9 +21,7 @@ function assertIdeology(profile: IdeologyProfile, field: string): void {
 
   for (const axis of profile.axes) {
     assertId(axis.id, "ideology-axis");
-    if (!Number.isFinite(axis.position) || axis.position < -100 || axis.position > 100) {
-      throw new Error(`${field} ideology position must be within -100..100`);
-    }
+    assertSignedPercentage(axis.position, `${field} ideology position`);
   }
 
   for (const doctrineId of profile.doctrineCommitments) {

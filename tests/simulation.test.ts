@@ -154,7 +154,7 @@ describe("resolveDoctrineShift", () => {
       {
         target: { kind: "project", id: "project:player" },
         field:
-          "state-field:ideology-axis-position:ideology-axis:coordination",
+          "state-field:ideology-axis-position-coordination",
         before: 10,
         after: 25,
         causes: [{ kind: "action", id: action.id }],

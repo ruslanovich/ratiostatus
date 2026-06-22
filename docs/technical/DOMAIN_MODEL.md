@@ -29,11 +29,11 @@ This is a conceptual vocabulary, not a final TypeScript schema. Names and bounda
 - Treat archetype evolution as continuous state change; do not lock a project to its starting identity.
 - Use provisional naming until product identity conventions are resolved.
 
-## Implemented Task 2.1 skeleton
+## Implemented domain surface and Task 2.2 validation
 
-The public compile-time domain surface is exported from `src/game-core/domain/index.ts`. It is split into small declaration modules for primitives, ideology, institutions, factions, relations, actions, events, state, and results. These modules contain readonly data shapes and type-only imports; they do not contain rules, content entries, framework dependencies, or runtime behavior.
+The public domain surface is exported from `src/game-core/domain/index.ts`. It is split into small modules for primitives, ideology, institutions, factions, relations, actions, events, state, results, and validation. The data shapes remain readonly and framework-independent. The validation module contains assertions only; it does not contain rules, content entries, consequence calculations, or infrastructure dependencies.
 
-Stable identifiers use namespaced template-literal types such as `project:${string}` and `action:${string}`. This provides compile-time namespace distinction without claiming runtime validity. Format and referential-integrity validation remain Task 2.2 work.
+Stable identifiers use namespaced template-literal types such as `project:${string}` and `action:${string}`. Runtime validation requires the exact `namespace:lowercase-kebab-case` form. Namespace and local format checks are implemented without a global ID registry.
 
 Numeric aliases document these intended bounds:
 
@@ -46,4 +46,8 @@ The initial core metric names are legitimacy, productivity, innovation, and mobi
 
 `PlayerAction` and `AIAction` share the nine action kinds already named by the gameplay loop, while their actor roles form a discriminated union. Actions carry intent, domain targets, and optional bounded intensity, never results. Detailed per-action parameter schemas remain Task 5.1 work.
 
-`TurnResult` represents the accepted player action, rival actions, structured numeric changes with causal references, emitted event cards, and an optional ending. It does not resolve a turn or include presentation formatting. Ending definitions, event definitions, content catalogs, and all runtime validators remain deferred to their assigned tasks.
+`TurnResult` represents the accepted player action, rival actions, structured numeric changes with causal references, emitted event cards, and an optional ending. It does not resolve a turn or include presentation formatting. Ending definitions, event definitions, and content catalogs remain deferred to their assigned tasks.
+
+Task 2.2 adds assertion helpers for percentages, signed percentages, turn numbers, turn limits, and stable IDs, plus aggregate validators for `CivilizationalProject`, `GameState`, `PlayerAction`, and `TurnResult`. Aggregate validation covers documented roles and enum values, required array shapes, project metrics, ideology axes, institution and faction data, contradictions, relations, event cards, endings, and causal references. Faction institution references are checked against institutions on the same project.
+
+Validation establishes domain-boundary legality only. Detailed per-action parameter and target schemas remain Task 5.1 work. Global ID uniqueness, global registries, catalog-wide referential integrity, cross-project relationship membership, content versioning, and gameplay legality or balancing formulas remain deferred.

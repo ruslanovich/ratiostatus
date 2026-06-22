@@ -1,5 +1,12 @@
 # Codex Changelog
 
+## 2026-06-22 — Domain validation and numeric bounds
+
+- Added public runtime assertions for stable ID format, percentage and signed-percentage bounds, turn ranges, projects, game state, player actions, and turn results.
+- Integrated state validation into minimal initialization and input/output validation into the doctrine-shift resolver, including normalized deterministic result and state-field IDs.
+- Reused generic bound and ID assertions from minimal content validation and added focused invalid-boundary coverage without introducing gameplay or balancing rules.
+- Updated the domain, simulation, content, testing, and architecture documentation to distinguish implemented validation from deferred detailed schemas and referential integrity.
+
 ## 2026-06-22 — Import-boundary test path correction
 
 - Moved the focused boundary regression suite to the standard, visible `tests/import-boundaries.test.ts` path.

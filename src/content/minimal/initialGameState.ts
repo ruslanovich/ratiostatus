@@ -1,4 +1,8 @@
-import type { CivilizationalProject, GameState } from "../../game-core/domain";
+import {
+  assertValidGameState,
+  type CivilizationalProject,
+  type GameState,
+} from "../../game-core/domain";
 import { provisionalArchetype } from "./provisionalArchetype";
 import { provisionalRival } from "./provisionalRival";
 import type { MinimalContent } from "./types";
@@ -26,7 +30,7 @@ export function createMinimalInitialGameState(
     metrics: content.archetype.metrics,
   };
 
-  return {
+  const state: GameState = {
     id: "game:minimal-provisional-session",
     turn: 0,
     turnLimit: 10,
@@ -36,4 +40,7 @@ export function createMinimalInitialGameState(
     history: [],
     ending: null,
   };
+
+  assertValidGameState(state);
+  return state;
 }

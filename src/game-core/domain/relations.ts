@@ -8,7 +8,7 @@ import type {
 
 export interface Contradiction {
   readonly id: ContradictionId;
-  /** Inclusive range 0..100; validated at runtime beginning in Task 2.2. */
+  /** Inclusive range 0..100; validated at runtime at core boundaries. */
   readonly pressure: Percentage;
   readonly sources: readonly DomainReference[];
 }
@@ -20,6 +20,6 @@ export interface ExternalRelation {
   readonly id: RelationId;
   readonly sourceProjectId: ProjectId;
   readonly targetProjectId: ProjectId;
-  /** Every metric is in the inclusive range 0..100; runtime validation begins in Task 2.2. */
+  /** Every metric is in the inclusive range 0..100; validated at runtime at core boundaries. */
   readonly metrics: Readonly<Record<RelationMetricName, Percentage>>;
 }

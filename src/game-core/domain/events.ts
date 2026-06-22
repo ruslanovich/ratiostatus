@@ -12,7 +12,7 @@ export interface EventCard {
   readonly id: EventId;
   readonly definitionId: EventDefinitionId;
   readonly category: EventCategory;
-  /** Inclusive range 0..100; validated at runtime beginning in Task 2.2. */
+  /** Inclusive range 0..100; validated at runtime at core boundaries. */
   readonly severity: Percentage;
   readonly causes: readonly DomainReference[];
   readonly allowedResponseKinds: readonly ActionKind[];
