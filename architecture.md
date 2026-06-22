@@ -52,6 +52,8 @@ Content loader ───┘
 
 Forbidden dependencies include `game-core -> UI`, `game-core -> LLM`, `game-core -> Supabase`, `game-core -> Vercel runtime`, and any core network or browser call.
 
+This boundary is enforced by `npm run check:boundaries`, which scans TypeScript and TSX files under `src/game-core/` for forbidden source-layer imports, framework and provider packages, network modules, and direct browser globals. `npm run check` includes this check in the complete local verification sequence.
+
 ## Planned folder layout
 
 Create folders only when a scoped implementation task needs them.
@@ -113,5 +115,6 @@ The optional LLM adapter has no implementation slot until the structured manual 
 - `src/game-core/domain/` contains framework-independent TypeScript domain declarations. It has no rules, runtime validation, content, UI, or infrastructure dependencies.
 - `src/game-core/simulation/` contains the pure Task 3.1 doctrine-shift resolver. It resolves only the first player ideology axis and is not a general turn pipeline.
 - `src/content/minimal/` contains the Task 4.1 provisional archetype and rival configuration, local replaceable validation, and the initializer for one legal resolver-ready `GameState`. Content imports core domain types; `game-core` does not import content.
+- `scripts/check-import-boundaries.mjs` enforces the inward dependency rule for all TypeScript and TSX files under `src/game-core/` as part of the baseline checks.
 
 All other folders in the planned layout remain deferred until their scoped tasks. The catalog-oriented `content` subfolders shown above remain planned; only `content/minimal` currently exists. The other planned `ui` folders also remain deferred; Task 9.1 adds only `ui/dev-loop`.

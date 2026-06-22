@@ -1,5 +1,11 @@
 # Codex Changelog
 
+## 2026-06-22 — Import-boundary enforcement
+
+- Added a focused TypeScript-aware checker for forbidden imports and browser globals under `src/game-core/`.
+- Added tests covering allowed core imports, forbidden source layers, frameworks, providers, network modules, browser globals, and comment/string false positives.
+- Added standalone and complete verification commands and documented the enforced core boundary.
+
 ## 2026-06-22 — Bare playable development loop
 
 - Replaced the placeholder page with a one-shot client development view that initializes the minimal validated fixture.

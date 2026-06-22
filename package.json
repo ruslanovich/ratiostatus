@@ -7,6 +7,8 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "check:boundaries": "node scripts/check-import-boundaries.mjs",
+    "check": "npm run lint && npm run typecheck && npm test && npm run check:boundaries && npm run build",
     "build": "next build"
   },
   "dependencies": {

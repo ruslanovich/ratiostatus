@@ -51,3 +51,11 @@ These ADR-style records capture accepted constraints. Amend or supersede a recor
 **Decision:** The application scaffold uses the Next.js App Router with React and strict TypeScript under `src/app`. npm and its lockfile define dependency installation, ESLint provides static linting, and Vitest provides environment-neutral unit tests.
 
 **Reason:** This is the smallest Vercel-compatible baseline that supplies explicit development, lint, type-check, test, and production-build commands without introducing gameplay or external services.
+
+## ADR-009: Enforce game-core import boundaries with a focused checker
+
+**Status:** Accepted
+
+**Decision:** A small repository script parses every TypeScript and TSX file under `src/game-core/` and rejects imports from `src/app`, `src/content`, `src/ui`, UI frameworks, LLM/provider SDKs, Supabase, Vercel packages, Node.js runtime modules, and obvious network packages. It also rejects direct references to common browser globals. The checker is exposed as `npm run check:boundaries` and included in `npm run check` with lint, type-checking, tests, and the production build.
+
+**Reason:** The core boundary is important enough to enforce mechanically, while the current repository does not justify a heavier dependency-graph tool. Using the existing TypeScript parser keeps the rule explicit and avoids matching imports inside comments or strings.

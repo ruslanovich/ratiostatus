@@ -43,7 +43,14 @@ Run each baseline check independently:
 npm run lint
 npm run typecheck
 npm test
+npm run check:boundaries
 npm run build
+```
+
+The boundary check scans TypeScript and TSX files under `src/game-core/` and rejects imports from presentation, content, framework, provider, browser, and network/runtime modules. Run the complete sequence with:
+
+```sh
+npm run check
 ```
 
 ## Documentation
