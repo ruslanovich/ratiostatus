@@ -12,7 +12,9 @@
 
 ## Implemented validation coverage
 
-Task 2.2 adds focused runtime-boundary tests for finite percentage and signed-percentage bounds, integer turn ranges, stable-ID namespaces, state turn invariants, project roles and ideology requirements, action kinds and actor matching, and bounded turn-result changes. Existing content and deterministic doctrine-shift suites exercise the same validators through initial-state construction and resolver input/output validation. These are invariant tests, not balancing formula tests.
+Focused runtime-boundary tests cover finite percentage and signed-percentage bounds, integer turn ranges, stable-ID namespaces, state turn invariants, project roles and ideology requirements, action kinds and actor matching, and bounded turn-result changes. The action-contract suite also covers valid examples for all nine discriminated action variants, per-kind ID namespaces and enums, required doctrine-shift magnitude bounds, and malformed parameter rejection. Existing content and doctrine-shift suites exercise the same validators through initial-state construction and resolver input/output validation. These are invariant tests, not balancing formula tests.
+
+Doctrine-shift rule tests cover axis-ID selection, increase and decrease, clamping at both signed bounds, unknown-axis rejection, determinism, input non-mutation, and causal output. The ordered-pipeline suite confirms that structurally valid non-shift actions remain unsupported for consequence resolution.
 
 ## Implemented ordered-pipeline coverage
 

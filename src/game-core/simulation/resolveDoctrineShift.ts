@@ -11,8 +11,8 @@ import {
   assertValidTurnResult,
 } from "../domain";
 
-const DEFAULT_DOCTRINE_SHIFT_INTENSITY = 10;
 const IDEOLOGY_POSITION_MAX = 100;
+const IDEOLOGY_POSITION_MIN = -100;
 
 export interface DoctrineShiftResolution {
   readonly state: GameState;
@@ -20,8 +20,7 @@ export interface DoctrineShiftResolution {
 }
 
 /**
- * Resolves the deliberately minimal Task 3.1 doctrine shift: move the first
- * player ideology axis toward +100 by the action intensity.
+ * Resolves a doctrine shift against the selected player ideology axis.
  */
 export function resolveDoctrineShift(
   state: GameState,
@@ -42,16 +41,21 @@ export function resolveDoctrineShift(
     throw new Error("Doctrine shift actor must match the player project");
   }
 
-  const [axis, ...remainingAxes] = state.playerProject.ideology.axes;
+  const axis = state.playerProject.ideology.axes.find(
+    (candidate) => candidate.id === action.parameters.axisId,
+  );
 
   if (axis === undefined) {
-    throw new Error("Player project must have at least one ideology axis");
+    throw new Error(`Doctrine shift references unknown ideology axis ${action.parameters.axisId}`);
   }
 
-  const intensity = action.intensity ?? DEFAULT_DOCTRINE_SHIFT_INTENSITY;
-  const nextPosition = Math.min(
-    IDEOLOGY_POSITION_MAX,
-    axis.position + intensity,
+  const signedMagnitude =
+    action.parameters.direction === "increase"
+      ? action.parameters.magnitude
+      : -action.parameters.magnitude;
+  const nextPosition = Math.max(
+    IDEOLOGY_POSITION_MIN,
+    Math.min(IDEOLOGY_POSITION_MAX, axis.position + signedMagnitude),
   ) as SignedPercentage;
   const nextTurn = state.turn + 1;
   const resultId = `turn-result:${state.id.slice("game:".length)}-${nextTurn}-${action.id.slice("action:".length)}` as TurnResultId;
@@ -81,7 +85,9 @@ export function resolveDoctrineShift(
       ...state.playerProject,
       ideology: {
         ...state.playerProject.ideology,
-        axes: [{ ...axis, position: nextPosition }, ...remainingAxes],
+        axes: state.playerProject.ideology.axes.map((candidate) =>
+          candidate.id === axis.id ? { ...candidate, position: nextPosition } : candidate,
+        ),
       },
     },
     history: [...state.history, resultId],

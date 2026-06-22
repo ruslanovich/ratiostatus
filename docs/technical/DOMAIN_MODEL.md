@@ -37,17 +37,31 @@ Stable identifiers use namespaced template-literal types such as `project:${stri
 
 Numeric aliases document these intended bounds:
 
-- `Percentage`: inclusive `0..100` for project, faction, institution, relation, event, contradiction, and action-intensity values.
+- `Percentage`: inclusive `0..100` for project, faction, institution, relation, event, contradiction, and doctrine-shift magnitude values.
 - `SignedPercentage`: inclusive `-100..100` for ideology-axis positions and the general numeric change envelope.
 - `TurnNumber`: integer `0..12`, where zero can represent the initial turn boundary.
 - `TurnLimit`: integer `10..12` for the configured MVP session length.
 
 The initial core metric names are legitimacy, productivity, innovation, and mobilization. Faction metric names follow the existing Epic 6 vocabulary: power, support, loyalty, visibility, and radicalization. External relations are directional and expose trust, hostility, influence, and pressure. These names establish shared vocabulary only; they do not define formulas, coefficients, invariants, or consequences.
 
-`PlayerAction` and `AIAction` share the nine action kinds already named by the gameplay loop, while their actor roles form a discriminated union. Actions carry intent, domain targets, and optional bounded intensity, never results. Detailed per-action parameter schemas remain Task 5.1 work.
+`PlayerAction` and `AIAction` share a nine-variant action catalog and are discriminated by `kind` (with `actorRole` distinguishing player and rival actions). Every variant carries the common `id`, `actorProjectId`, `actorRole`, and `targets` fields plus a required kind-specific `parameters` object:
+
+| Kind | Parameters |
+| --- | --- |
+| `shift_doctrine` | `axisId: IdeologyAxisId`, `direction: increase \| decrease`, `magnitude: Percentage` |
+| `build_institution` | `institutionId: InstitutionId`, `category: InstitutionCategory` |
+| `reinterpret_crisis` | `eventId: EventId`, `frame: order \| freedom \| equality \| faith \| progress \| security` |
+| `define_enemy` | `targetProjectId: ProjectId`, `framing: existential \| competitive \| corrupting \| misguided` |
+| `make_compromise` | `factionId: FactionId`, `concession: symbolic \| institutional \| material` |
+| `suppress_faction` | `factionId: FactionId`, `method: legal \| administrative \| coercive` |
+| `empower_faction` | `factionId: FactionId`, `channel: institutional \| symbolic \| resource` |
+| `export_ideology` | `targetProjectId: ProjectId`, `channel: diplomacy \| movement_support \| media \| education` |
+| `seek_detente` | `targetProjectId: ProjectId`, `basis: trade \| security \| cultural_exchange \| non_interference` |
+
+Actions encode intent and never results. Runtime validation checks the discriminant, parameter object, stable-ID namespaces, enum membership, target reference shape, actor identity, and numeric bounds. It does not decide whether referenced content exists or whether an action is currently available or legal, except for the existing optional check that a player action's actor matches the player project in supplied state.
 
 `TurnResult` represents the accepted player action, rival actions, structured numeric changes with causal references, emitted event cards, and an optional ending. It does not resolve a turn or include presentation formatting. Ending definitions, event definitions, and content catalogs remain deferred to their assigned tasks.
 
-Task 2.2 adds assertion helpers for percentages, signed percentages, turn numbers, turn limits, and stable IDs, plus aggregate validators for `CivilizationalProject`, `GameState`, `PlayerAction`, and `TurnResult`. Aggregate validation covers documented roles and enum values, required array shapes, project metrics, ideology axes, institution and faction data, contradictions, relations, event cards, endings, and causal references. Faction institution references are checked against institutions on the same project.
+The domain boundary exposes assertion helpers for percentages, signed percentages, turn numbers, turn limits, and stable IDs, plus aggregate validators for `CivilizationalProject`, `GameState`, `PlayerAction`, and `TurnResult`. Aggregate validation covers documented roles and enum values, required array shapes, project metrics, ideology axes, institution and faction data, contradictions, relations, per-action parameters, event cards, endings, and causal references. Faction institution references are checked against institutions on the same project.
 
-Validation establishes domain-boundary legality only. Detailed per-action parameter and target schemas remain Task 5.1 work. Global ID uniqueness, global registries, catalog-wide referential integrity, cross-project relationship membership, content versioning, and gameplay legality or balancing formulas remain deferred.
+Validation establishes structural domain-boundary validity only. Per-action target restrictions, global ID uniqueness, global registries, catalog-wide referential integrity, cross-project relationship membership, content versioning, and gameplay legality or balancing formulas remain deferred.

@@ -23,7 +23,11 @@ function createAction(state: GameState): PlayerAction {
     actorRole: "player",
     kind: "shift_doctrine",
     targets: [{ kind: "project", id: state.playerProject.id }],
-    intensity: 10,
+    parameters: {
+      axisId: state.playerProject.ideology.axes[0].id,
+      direction: "increase",
+      magnitude: 10,
+    },
   };
 }
 
@@ -100,6 +104,129 @@ describe("domain validation", () => {
     const invalid = { ...createAction(state), kind: "invent_rule" } as unknown as PlayerAction;
 
     expect(() => assertValidPlayerAction(invalid)).toThrow("invalid value invent_rule");
+  });
+
+  it("accepts shift_doctrine with explicit parameters", () => {
+    const state = createMinimalInitialGameState();
+
+    expect(() => assertValidPlayerAction(createAction(state))).not.toThrow();
+  });
+
+  it("rejects an invalid shift_doctrine axis namespace", () => {
+    const state = createMinimalInitialGameState();
+    const invalid = {
+      ...createAction(state),
+      parameters: { ...createAction(state).parameters, axisId: "event:not-an-axis" },
+    } as unknown as PlayerAction;
+
+    expect(() => assertValidPlayerAction(invalid)).toThrow(
+      "ideology-axis:lowercase-kebab-case",
+    );
+  });
+
+  it("rejects an invalid shift_doctrine direction", () => {
+    const state = createMinimalInitialGameState();
+    const invalid = {
+      ...createAction(state),
+      parameters: { ...createAction(state).parameters, direction: "sideways" },
+    } as unknown as PlayerAction;
+
+    expect(() => assertValidPlayerAction(invalid)).toThrow("invalid value sideways");
+  });
+
+  it.each([-1, 101, Number.NaN, Number.POSITIVE_INFINITY])(
+    "rejects invalid shift_doctrine magnitude %s",
+    (magnitude) => {
+      const state = createMinimalInitialGameState();
+      const invalid = {
+        ...createAction(state),
+        parameters: { ...createAction(state).parameters, magnitude },
+      } as PlayerAction;
+
+      expect(() => assertValidPlayerAction(invalid)).toThrow("0..100");
+    },
+  );
+
+  it.each<PlayerAction>([
+    {
+      id: "action:build-institution",
+      actorProjectId: "project:player",
+      actorRole: "player",
+      kind: "build_institution",
+      targets: [{ kind: "institution", id: "institution:public-forum" }],
+      parameters: { institutionId: "institution:public-forum", category: "governance" },
+    },
+    {
+      id: "action:reinterpret-crisis",
+      actorProjectId: "project:player",
+      actorRole: "player",
+      kind: "reinterpret_crisis",
+      targets: [{ kind: "event", id: "event:supply-strain" }],
+      parameters: { eventId: "event:supply-strain", frame: "order" },
+    },
+    {
+      id: "action:define-enemy",
+      actorProjectId: "project:player",
+      actorRole: "player",
+      kind: "define_enemy",
+      targets: [{ kind: "project", id: "project:rival" }],
+      parameters: { targetProjectId: "project:rival", framing: "competitive" },
+    },
+    {
+      id: "action:make-compromise",
+      actorProjectId: "project:player",
+      actorRole: "player",
+      kind: "make_compromise",
+      targets: [{ kind: "faction", id: "faction:builders" }],
+      parameters: { factionId: "faction:builders", concession: "symbolic" },
+    },
+    {
+      id: "action:suppress-faction",
+      actorProjectId: "project:player",
+      actorRole: "player",
+      kind: "suppress_faction",
+      targets: [{ kind: "faction", id: "faction:builders" }],
+      parameters: { factionId: "faction:builders", method: "legal" },
+    },
+    {
+      id: "action:empower-faction",
+      actorProjectId: "project:player",
+      actorRole: "player",
+      kind: "empower_faction",
+      targets: [{ kind: "faction", id: "faction:builders" }],
+      parameters: { factionId: "faction:builders", channel: "resource" },
+    },
+    {
+      id: "action:export-ideology",
+      actorProjectId: "project:player",
+      actorRole: "player",
+      kind: "export_ideology",
+      targets: [{ kind: "project", id: "project:rival" }],
+      parameters: { targetProjectId: "project:rival", channel: "media" },
+    },
+    {
+      id: "action:seek-detente",
+      actorProjectId: "project:player",
+      actorRole: "player",
+      kind: "seek_detente",
+      targets: [{ kind: "project", id: "project:rival" }],
+      parameters: { targetProjectId: "project:rival", basis: "trade" },
+    },
+  ])("accepts explicit parameters for $kind", (action) => {
+    expect(() => assertValidPlayerAction(action)).not.toThrow();
+  });
+
+  it("rejects an invalid non-shift enum parameter", () => {
+    const invalid = {
+      id: "action:invalid-detente",
+      actorProjectId: "project:player",
+      actorRole: "player",
+      kind: "seek_detente",
+      targets: [{ kind: "project", id: "project:rival" }],
+      parameters: { targetProjectId: "project:rival", basis: "domination" },
+    } as unknown as PlayerAction;
+
+    expect(() => assertValidPlayerAction(invalid)).toThrow("invalid value domination");
   });
 
   it("rejects a PlayerAction actor mismatch against state", () => {

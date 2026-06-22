@@ -22,13 +22,13 @@ The simulation engine will be a pure, deterministic turn resolver. Given a valid
 
 The order is part of the public simulation contract through `TURN_PHASES` and is covered by tests. Future rules must fill the named phase adapters without bypassing or dynamically reordering this pipeline.
 
-## Implemented Task 3.1 slice
+## Implemented doctrine-shift slice
 
-`src/game-core/simulation/resolveDoctrineShift.ts` implements the first narrow simulation boundary. `resolveDoctrineShift` accepts a `GameState` and a player `shift_doctrine` action, then moves the first ideology axis on the player project toward `100`. It uses the action's `Percentage` intensity or a fixed default of `10`, clamps the result to `100`, increments the turn, appends a deterministic `TurnResultId` to history, and returns one causal `StateChange` with the action as its cause.
+`src/game-core/simulation/resolveDoctrineShift.ts` implements the narrow doctrine-shift simulation boundary. `resolveDoctrineShift` accepts a `GameState` and a player `shift_doctrine` action, finds the player project's ideology axis named by `parameters.axisId`, and applies the required `parameters.magnitude`. `increase` adds the magnitude and `decrease` subtracts it; the resulting position is clamped to `-100..100`. The resolver increments the turn, appends a deterministic `TurnResultId` to history, and returns one causal `StateChange` with the action as its cause.
 
 The deterministic result identifier is derived from the game id, resulting turn number, and action id and normalized to the stable-ID kebab-case payload format. The resolver creates new state, project, ideology, axes, and history objects while preserving unrelated fields. It rejects other action kinds, non-player actor roles, actor-project mismatches, and player projects without an ideology axis.
 
-The current `PlayerAction.intensity` contract is an unsigned `Percentage` (`0..100`), so this slice supports movement only toward the positive bound. Negative doctrine movement and axis selection require the later per-action schema work; no lower-bound movement is introduced here. The resolver now asserts the input `GameState` and `PlayerAction` before calculation and the returned `GameState` and `TurnResult` before returning.
+The resolver rejects unknown axis IDs after structural validation. It immutably maps the selected axis while preserving the other axes and asserts the returned `GameState` and `TurnResult` before returning.
 
 The public `resolveTurn` entrypoint routes this behavior through the ordered pipeline and rejects all other action kinds. Direct `resolveDoctrineShift` remains available as the narrow rule resolver and retains its validation. Neither entrypoint updates rivals, events, factions, institutions, contradictions, relations, metrics, or endings.
 

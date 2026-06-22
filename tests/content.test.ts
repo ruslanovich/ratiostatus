@@ -107,7 +107,11 @@ describe("minimal provisional content", () => {
       actorRole: "player",
       kind: "shift_doctrine",
       targets: [{ kind: "project", id: initialState.playerProject.id }],
-      intensity: 10,
+      parameters: {
+        axisId: initialState.playerProject.ideology.axes[0].id,
+        direction: "increase",
+        magnitude: 10,
+      },
     } satisfies PlayerAction;
 
     const resolution = resolveDoctrineShift(initialState, action);

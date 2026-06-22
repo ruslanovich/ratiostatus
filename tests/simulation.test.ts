@@ -45,37 +45,76 @@ function createState(position = 10): GameState {
   };
 }
 
-function createAction(overrides: Partial<PlayerAction> = {}): PlayerAction {
+type ShiftDoctrineAction = Extract<PlayerAction, { kind: "shift_doctrine" }>;
+
+function createAction(
+  overrides: Partial<Omit<ShiftDoctrineAction, "parameters">> & {
+    parameters?: Partial<ShiftDoctrineAction["parameters"]>;
+  } = {},
+): ShiftDoctrineAction {
+  const { parameters, ...baseOverrides } = overrides;
   return {
     id: "action:turn-one-player",
     actorProjectId: "project:player",
     actorRole: "player",
     kind: "shift_doctrine",
     targets: [{ kind: "project", id: "project:player" }],
-    intensity: 15,
-    ...overrides,
+    parameters: {
+      axisId: "ideology-axis:coordination",
+      direction: "increase",
+      magnitude: 15,
+      ...parameters,
+    },
+    ...baseOverrides,
+  };
+}
+
+function createBuildInstitutionAction(): Extract<
+  PlayerAction,
+  { kind: "build_institution" }
+> {
+  return {
+    id: "action:build-institution",
+    actorProjectId: "project:player",
+    actorRole: "player",
+    kind: "build_institution",
+    targets: [{ kind: "institution", id: "institution:public-forum" }],
+    parameters: {
+      institutionId: "institution:public-forum",
+      category: "governance",
+    },
   };
 }
 
 describe("resolveDoctrineShift", () => {
-  it("resolves a valid shift against the first ideology axis", () => {
+  it("increases the selected ideology axis", () => {
     const input = createState();
-    const { state, result } = resolveDoctrineShift(input, createAction());
+    const { state, result } = resolveDoctrineShift(
+      input,
+      createAction({ parameters: { axisId: "ideology-axis:openness" } }),
+    );
 
-    expect(state.playerProject.ideology.axes[0]?.position).toBe(25);
-    expect(state.playerProject.ideology.axes[1]?.position).toBe(-20);
+    expect(state.playerProject.ideology.axes[0]?.position).toBe(10);
+    expect(state.playerProject.ideology.axes[1]?.position).toBe(-5);
     expect(state.turn).toBe(1);
     expect(state.history).toEqual([result.id]);
     expect(result.turn).toBe(1);
   });
 
-  it("uses the documented default intensity when intensity is absent", () => {
+  it("decreases the selected ideology axis", () => {
     const { state } = resolveDoctrineShift(
       createState(),
-      createAction({ intensity: undefined }),
+      createAction({
+        parameters: {
+          axisId: "ideology-axis:openness",
+          direction: "decrease",
+          magnitude: 10,
+        },
+      }),
     );
 
-    expect(state.playerProject.ideology.axes[0]?.position).toBe(20);
+    expect(state.playerProject.ideology.axes[0]?.position).toBe(10);
+    expect(state.playerProject.ideology.axes[1]?.position).toBe(-30);
   });
 
   it("does not mutate the input state", () => {
@@ -100,21 +139,40 @@ describe("resolveDoctrineShift", () => {
     expect(first).toEqual(second);
   });
 
-  it("clamps the first ideology axis position to 100", () => {
+  it("clamps an increase to 100", () => {
     const { state, result } = resolveDoctrineShift(
       createState(95),
-      createAction({ intensity: 20 }),
+      createAction({ parameters: { magnitude: 20 } }),
     );
 
     expect(state.playerProject.ideology.axes[0]?.position).toBe(100);
     expect(result.changes[0]?.after).toBe(100);
   });
 
+  it("clamps a decrease to -100", () => {
+    const { state, result } = resolveDoctrineShift(
+      createState(-95),
+      createAction({ parameters: { direction: "decrease", magnitude: 20 } }),
+    );
+
+    expect(state.playerProject.ideology.axes[0]?.position).toBe(-100);
+    expect(result.changes[0]?.after).toBe(-100);
+  });
+
+  it("rejects an unknown ideology axis", () => {
+    expect(() =>
+      resolveDoctrineShift(
+        createState(),
+        createAction({ parameters: { axisId: "ideology-axis:unknown" } }),
+      ),
+    ).toThrow("unknown ideology axis ideology-axis:unknown");
+  });
+
   it("rejects a non-shift action", () => {
     expect(() =>
       resolveDoctrineShift(
         createState(),
-        createAction({ kind: "build_institution" }),
+        createBuildInstitutionAction(),
       ),
     ).toThrow("only accepts shift_doctrine");
   });
@@ -139,7 +197,7 @@ describe("resolveDoctrineShift", () => {
     ).toThrow("must match the player project");
   });
 
-  it("rejects a state without a player ideology axis", () => {
+  it("rejects a state without a player ideology axis during state validation", () => {
     const input = createState();
     const stateWithoutAxes: GameState = {
       ...input,
@@ -154,7 +212,7 @@ describe("resolveDoctrineShift", () => {
     ).toThrow("at least one ideology axis");
   });
 
-  it("returns one causal state change referencing the action", () => {
+  it("returns one causal state change referencing the action and selected axis", () => {
     const action = createAction();
     const { result } = resolveDoctrineShift(createState(), action);
 
@@ -229,7 +287,7 @@ describe("ordered turn pipeline", () => {
 
   it("rejects unsupported actions", () => {
     expect(() =>
-      resolveTurn(createState(), createAction({ kind: "build_institution" })),
+      resolveTurn(createState(), createBuildInstitutionAction()),
     ).toThrow("only supports shift_doctrine");
   });
 

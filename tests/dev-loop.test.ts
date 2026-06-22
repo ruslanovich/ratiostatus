@@ -13,6 +13,11 @@ describe("bare development loop action", () => {
       actorRole: "player",
       kind: "shift_doctrine",
       targets: [{ kind: "project", id: state.playerProject.id }],
+      parameters: {
+        axisId: state.playerProject.ideology.axes[0].id,
+        direction: "increase",
+        magnitude: 10,
+      },
     });
   });
 });

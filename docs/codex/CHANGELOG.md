@@ -1,5 +1,12 @@
 # Codex Changelog
 
+## 2026-06-22 — Detailed player action schemas
+
+- Replaced generic optional action intensity with a nine-kind discriminated action catalog and required kind-specific parameter objects for player and rival structured actions.
+- Added runtime validation for every parameter ID namespace, enum, and doctrine-shift magnitude bound without adding gameplay-legality rules or non-shift consequences.
+- Updated doctrine shift to select an axis by ID, increase or decrease by explicit magnitude, clamp to `-100..100`, and preserve immutable deterministic output.
+- Migrated the bare development loop and fixtures, added focused schema and resolver coverage, and aligned domain, simulation, testing, gameplay-loop, architecture, UI, and future LLM contract documentation.
+
 ## 2026-06-22 — Ordered turn phases
 
 - Added a fixed, typed eleven-phase turn sequence and a pure `resolveTurn` entrypoint that executes every phase in order.

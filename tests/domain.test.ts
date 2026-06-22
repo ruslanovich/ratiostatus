@@ -24,7 +24,11 @@ const playerAction = {
   actorRole: "player",
   kind: "shift_doctrine",
   targets: [{ kind: "project", id: "project:player" }],
-  intensity: 10,
+  parameters: {
+    axisId: "ideology-axis:coordination",
+    direction: "increase",
+    magnitude: 10,
+  },
 } satisfies PlayerAction;
 
 const playerProject = {

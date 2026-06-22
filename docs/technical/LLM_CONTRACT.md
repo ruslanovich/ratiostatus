@@ -54,13 +54,16 @@ It must not:
 
 ```json
 {
-  "action_type": "build_institution",
-  "target": "worker_councils",
-  "intensity": 0.68,
-  "tags": ["worker_power", "collectivism", "controlled_pluralism"],
+  "kind": "build_institution",
+  "targets": [
+    { "kind": "institution", "id": "institution:worker-councils" }
+  ],
+  "parameters": {
+    "institutionId": "institution:worker-councils",
+    "category": "economic"
+  },
   "confidence": 0.86
 }
 ```
 
-The example identifiers are provisional. The validator must reject unknown values, out-of-range intensity or confidence, and actions illegal in the current state before constructing a core action.
-
+The example identifiers are provisional. A future adapter must emit the selected action variant's exact `parameters` shape, after which trusted application code supplies action identity and actor fields. The validator must reject unknown kinds, malformed namespaced identifiers, invalid per-kind enums or numeric bounds, out-of-range confidence, and actions illegal in the current state before calling the core. The model output remains a proposal and never contains consequences.

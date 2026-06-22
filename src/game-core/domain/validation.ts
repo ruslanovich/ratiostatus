@@ -37,6 +37,40 @@ const INSTITUTION_CATEGORIES = new Set([
 const EVENT_CATEGORIES = new Set(["crisis", "opportunity", "interpretation"]);
 const ENDING_CATEGORIES = new Set(["success", "transformation", "failure"]);
 const PROJECT_ROLES = new Set(["player", "rival"]);
+const DOCTRINE_SHIFT_DIRECTIONS = new Set(["increase", "decrease"]);
+const CRISIS_FRAMES = new Set([
+  "order",
+  "freedom",
+  "equality",
+  "faith",
+  "progress",
+  "security",
+]);
+const ENEMY_FRAMINGS = new Set([
+  "existential",
+  "competitive",
+  "corrupting",
+  "misguided",
+]);
+const COMPROMISE_CONCESSIONS = new Set(["symbolic", "institutional", "material"]);
+const SUPPRESSION_METHODS = new Set(["legal", "administrative", "coercive"]);
+const FACTION_EMPOWERMENT_CHANNELS = new Set([
+  "institutional",
+  "symbolic",
+  "resource",
+]);
+const IDEOLOGY_EXPORT_CHANNELS = new Set([
+  "diplomacy",
+  "movement_support",
+  "media",
+  "education",
+]);
+const DETENTE_BASES = new Set([
+  "trade",
+  "security",
+  "cultural_exchange",
+  "non_interference",
+]);
 
 const REFERENCE_NAMESPACES: Readonly<Record<string, string>> = {
   project: "project",
@@ -55,9 +89,15 @@ function assertArray(value: unknown, field: string): asserts value is readonly u
   }
 }
 
-function assertAllowed(value: string, allowed: ReadonlySet<string>, field: string): void {
-  if (!allowed.has(value)) {
-    throw new Error(`${field} has invalid value ${value}`);
+function assertAllowed(value: unknown, allowed: ReadonlySet<string>, field: string): void {
+  if (typeof value !== "string" || !allowed.has(value)) {
+    throw new Error(`${field} has invalid value ${String(value)}`);
+  }
+}
+
+function assertRecord(value: unknown, field: string): asserts value is Record<string, unknown> {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) {
+    throw new Error(`${field} must be an object`);
   }
 }
 
@@ -260,8 +300,118 @@ function assertAction(action: CoreAction, expectedRole: "player" | "rival", fiel
   for (const [index, target] of action.targets.entries()) {
     assertDomainReference(target, `${field}.targets[${index}]`);
   }
-  if (action.intensity !== undefined) {
-    assertPercentage(action.intensity, `${field}.intensity`);
+  assertRecord(action.parameters, `${field}.parameters`);
+
+  switch (action.kind) {
+    case "shift_doctrine":
+      assertStableId(
+        action.parameters.axisId,
+        "ideology-axis",
+        `${field}.parameters.axisId`,
+      );
+      assertAllowed(
+        action.parameters.direction,
+        DOCTRINE_SHIFT_DIRECTIONS,
+        `${field}.parameters.direction`,
+      );
+      assertPercentage(action.parameters.magnitude, `${field}.parameters.magnitude`);
+      break;
+    case "build_institution":
+      assertStableId(
+        action.parameters.institutionId,
+        "institution",
+        `${field}.parameters.institutionId`,
+      );
+      assertAllowed(
+        action.parameters.category,
+        INSTITUTION_CATEGORIES,
+        `${field}.parameters.category`,
+      );
+      break;
+    case "reinterpret_crisis":
+      assertStableId(
+        action.parameters.eventId,
+        "event",
+        `${field}.parameters.eventId`,
+      );
+      assertAllowed(
+        action.parameters.frame,
+        CRISIS_FRAMES,
+        `${field}.parameters.frame`,
+      );
+      break;
+    case "define_enemy":
+      assertStableId(
+        action.parameters.targetProjectId,
+        "project",
+        `${field}.parameters.targetProjectId`,
+      );
+      assertAllowed(
+        action.parameters.framing,
+        ENEMY_FRAMINGS,
+        `${field}.parameters.framing`,
+      );
+      break;
+    case "make_compromise":
+      assertStableId(
+        action.parameters.factionId,
+        "faction",
+        `${field}.parameters.factionId`,
+      );
+      assertAllowed(
+        action.parameters.concession,
+        COMPROMISE_CONCESSIONS,
+        `${field}.parameters.concession`,
+      );
+      break;
+    case "suppress_faction":
+      assertStableId(
+        action.parameters.factionId,
+        "faction",
+        `${field}.parameters.factionId`,
+      );
+      assertAllowed(
+        action.parameters.method,
+        SUPPRESSION_METHODS,
+        `${field}.parameters.method`,
+      );
+      break;
+    case "empower_faction":
+      assertStableId(
+        action.parameters.factionId,
+        "faction",
+        `${field}.parameters.factionId`,
+      );
+      assertAllowed(
+        action.parameters.channel,
+        FACTION_EMPOWERMENT_CHANNELS,
+        `${field}.parameters.channel`,
+      );
+      break;
+    case "export_ideology":
+      assertStableId(
+        action.parameters.targetProjectId,
+        "project",
+        `${field}.parameters.targetProjectId`,
+      );
+      assertAllowed(
+        action.parameters.channel,
+        IDEOLOGY_EXPORT_CHANNELS,
+        `${field}.parameters.channel`,
+      );
+      break;
+    case "seek_detente":
+      assertStableId(
+        action.parameters.targetProjectId,
+        "project",
+        `${field}.parameters.targetProjectId`,
+      );
+      assertAllowed(
+        action.parameters.basis,
+        DETENTE_BASES,
+        `${field}.parameters.basis`,
+      );
+      break;
   }
 }
 
