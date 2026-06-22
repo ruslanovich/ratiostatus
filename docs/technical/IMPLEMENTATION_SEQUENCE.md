@@ -50,11 +50,11 @@ This order decomposes the epics into small Codex-sized tasks. Task IDs identify 
 **Output:** Explicit pure pipeline for player action, metrics, factions, contradictions, relations, rivals, events, validation, and ending checks, with empty/no-op phase adapters where rules do not yet exist.  
 **Do not do:** Hide ordering in side effects, introduce randomness, or fill every phase with speculative logic.
 
-## Task 3.3 — Implement minimal state-system updates
+## Task 3.3 — Implement minimal deterministic project metric derivation
 
 **Depends on:** Task 3.2.  
-**Output:** Small documented rules for bounded project metrics, one faction reaction, one contradiction, and one external-relation update, with causal and invariant tests.  
-**Do not do:** Implement complete internal politics, event catalogs, advanced AI, war resolution, or production balancing.
+**Output:** One placeholder bounded project-metric derivation after doctrine shift, causal changes, multi-change debug output, and focused invariant tests.
+**Do not do:** Add faction, contradiction, relation, rival, event, ending, non-shift action, or balancing rules.
 
 ## Task 9.2 — Add scripted 10-turn headless session
 

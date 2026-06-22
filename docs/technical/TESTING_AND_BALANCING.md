@@ -20,7 +20,9 @@ The manual action-option suite covers enabled increase/decrease generation from 
 
 ## Implemented ordered-pipeline coverage
 
-Task 3.2 tests the exact public `TURN_PHASES` order, equivalence between the turn entrypoint and the existing doctrine-shift resolver, equal-output determinism, input non-mutation, preservation through no-op phases, narrow rejection of unsupported actions, and output acceptance by the state and result validators. Later phase implementations must replace the relevant no-op while retaining order, causality, determinism, bounds, and non-mutation coverage.
+Task 3.2 tests the exact public `TURN_PHASES` order, equal-output determinism, input non-mutation, preservation through no-op phases, narrow rejection of unsupported actions, and output acceptance by the state and result validators. Later phase implementations must replace the relevant no-op while retaining order, causality, determinism, bounds, and non-mutation coverage.
+
+Task 3.3 adds focused coverage for the implemented project-metric phase: doctrine increases derive mobilization `+1` and legitimacy `-1`; decreases derive the inverse; both metrics clamp to `0..100`; both causal changes are appended after the doctrine-axis change and reference the player action. Tests also verify that direct `resolveDoctrineShift` remains metric-free, all other state-system phases preserve factions, contradictions, relations, rivals, events, and endings, and pipeline output passes existing validators. These assertions cover the placeholder deltas only and are not balancing tests.
 
 ## Future simulation harness
 

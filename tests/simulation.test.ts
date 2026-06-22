@@ -11,7 +11,10 @@ import {
   TURN_PHASES,
 } from "../src/game-core/simulation";
 
-function createState(position = 10): GameState {
+function createState(
+  position = 10,
+  metrics: Partial<GameState["playerProject"]["metrics"]> = {},
+): GameState {
   return {
     id: "game:doctrine-shift-fixture",
     turn: 0,
@@ -36,6 +39,7 @@ function createState(position = 10): GameState {
         productivity: 50,
         innovation: 50,
         mobilization: 50,
+        ...metrics,
       },
     },
     rivalProjects: [],
@@ -227,6 +231,17 @@ describe("resolveDoctrineShift", () => {
       },
     ]);
   });
+
+  it("does not apply the turn-pipeline metric derivation directly", () => {
+    const input = createState();
+    const { state, result } = resolveDoctrineShift(input, createAction());
+
+    expect(state.playerProject.metrics).toBe(input.playerProject.metrics);
+    expect(result.changes).toHaveLength(1);
+    expect(result.changes[0]?.field).toBe(
+      "state-field:ideology-axis-position-coordination",
+    );
+  });
 });
 
 describe("ordered turn pipeline", () => {
@@ -246,11 +261,85 @@ describe("ordered turn pipeline", () => {
     ]);
   });
 
-  it("resolves shift_doctrine with the existing effective output", () => {
+  it("derives increase metrics after resolving the doctrine shift", () => {
     const state = createState();
     const action = createAction();
+    const { state: nextState, result } = resolveTurn(state, action);
 
-    expect(resolveTurn(state, action)).toEqual(resolveDoctrineShift(state, action));
+    expect(nextState.playerProject.ideology.axes[0]?.position).toBe(25);
+    expect(nextState.playerProject.metrics.mobilization).toBe(51);
+    expect(nextState.playerProject.metrics.legitimacy).toBe(49);
+    expect(result.changes.map((change) => change.field)).toEqual([
+      "state-field:ideology-axis-position-coordination",
+      "state-field:project-metric-mobilization",
+      "state-field:project-metric-legitimacy",
+    ]);
+  });
+
+  it("derives decrease metrics after resolving the doctrine shift", () => {
+    const state = createState();
+    const action = createAction({
+      parameters: { direction: "decrease", magnitude: 15 },
+    });
+    const { state: nextState, result } = resolveTurn(state, action);
+
+    expect(nextState.playerProject.ideology.axes[0]?.position).toBe(-5);
+    expect(nextState.playerProject.metrics.mobilization).toBe(49);
+    expect(nextState.playerProject.metrics.legitimacy).toBe(51);
+    expect(
+      result.changes.slice(1).map(({ before, after }) => ({ before, after })),
+    ).toEqual([
+      { before: 50, after: 49 },
+      { before: 50, after: 51 },
+    ]);
+  });
+
+  it("clamps derived project metrics to 0..100", () => {
+    const upper = resolveTurn(
+      createState(10, { mobilization: 100, legitimacy: 0 }),
+      createAction(),
+    );
+    const lower = resolveTurn(
+      createState(10, { mobilization: 0, legitimacy: 100 }),
+      createAction({ parameters: { direction: "decrease" } }),
+    );
+
+    expect(upper.state.playerProject.metrics).toMatchObject({
+      mobilization: 100,
+      legitimacy: 0,
+    });
+    expect(
+      upper.result.changes.slice(1).map((change) => change.after),
+    ).toEqual([100, 0]);
+    expect(lower.state.playerProject.metrics).toMatchObject({
+      mobilization: 0,
+      legitimacy: 100,
+    });
+    expect(
+      lower.result.changes.slice(1).map((change) => change.after),
+    ).toEqual([0, 100]);
+  });
+
+  it("appends metric changes caused by the accepted player action", () => {
+    const action = createAction();
+    const { result } = resolveTurn(createState(), action);
+
+    expect(result.changes.slice(1)).toEqual([
+      {
+        target: { kind: "project", id: "project:player" },
+        field: "state-field:project-metric-mobilization",
+        before: 50,
+        after: 51,
+        causes: [{ kind: "action", id: action.id }],
+      },
+      {
+        target: { kind: "project", id: "project:player" },
+        field: "state-field:project-metric-legitimacy",
+        before: 50,
+        after: 49,
+        causes: [{ kind: "action", id: action.id }],
+      },
+    ]);
   });
 
   it("returns deeply equal output for equal input", () => {
@@ -268,11 +357,16 @@ describe("ordered turn pipeline", () => {
     expect(input).toEqual(snapshot);
   });
 
-  it("preserves state outside the implemented action phase", () => {
+  it("preserves state outside the doctrine and project-metric phases", () => {
     const input = createState();
     const { state, result } = resolveTurn(input, createAction());
 
-    expect(state.playerProject.metrics).toBe(input.playerProject.metrics);
+    expect(state.playerProject.metrics.productivity).toBe(
+      input.playerProject.metrics.productivity,
+    );
+    expect(state.playerProject.metrics.innovation).toBe(
+      input.playerProject.metrics.innovation,
+    );
     expect(state.playerProject.factions).toBe(input.playerProject.factions);
     expect(state.playerProject.contradictions).toBe(
       input.playerProject.contradictions,

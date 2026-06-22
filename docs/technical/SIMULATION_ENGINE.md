@@ -18,7 +18,7 @@ The simulation engine will be a pure, deterministic turn resolver. Given a valid
 10. `check_ending`
 11. `build_turn_result`
 
-`resolveTurn` executes a typed handler for every phase in this order. Input validation asserts the `GameState` and player action. The action phase currently delegates only `shift_doctrine` to `resolveDoctrineShift`. Output validation asserts the resulting state and turn result. Project metrics, factions, contradictions, external relations, rival actions, events, ending checks, and final result assembly are explicit context-preserving no-ops. The doctrine-shift delegate currently constructs the thin-slice result, so `build_turn_result` remains a no-op until later action composition requires shared assembly.
+`resolveTurn` executes a typed handler for every phase in this order. Input validation asserts the `GameState` and player action. The action phase currently delegates only `shift_doctrine` to `resolveDoctrineShift`. `update_project_metrics` then applies the implemented placeholder derivation described below. Output validation asserts the resulting state and turn result. Factions, contradictions, external relations, rival actions, events, ending checks, and final result assembly remain explicit context-preserving no-ops. The doctrine-shift delegate currently constructs the thin-slice result, so `build_turn_result` remains a no-op until later action composition requires shared assembly.
 
 The order is part of the public simulation contract through `TURN_PHASES` and is covered by tests. Future rules must fill the named phase adapters without bypassing or dynamically reordering this pipeline.
 
@@ -30,7 +30,13 @@ The deterministic result identifier is derived from the game id, resulting turn 
 
 The resolver rejects unknown axis IDs after structural validation. It immutably maps the selected axis while preserving the other axes and asserts the returned `GameState` and `TurnResult` before returning.
 
-The public `resolveTurn` entrypoint routes this behavior through the ordered pipeline and rejects all other action kinds. Direct `resolveDoctrineShift` remains available as the narrow rule resolver and retains its validation. Neither entrypoint updates rivals, events, factions, institutions, contradictions, relations, metrics, or endings.
+The public `resolveTurn` entrypoint routes this behavior through the ordered pipeline and rejects all other action kinds. Direct `resolveDoctrineShift` remains available as the narrow rule resolver and retains its validation; it does not derive metrics. Neither entrypoint updates rivals, events, factions, institutions, contradictions, relations, productivity, innovation, or endings.
+
+## Implemented placeholder project-metric derivation
+
+`src/game-core/simulation/updateProjectMetrics.ts` is a pure phase helper that requires the state and existing `TurnResult` produced by the action phase. It inspects `result.acceptedPlayerAction` and acts only for `shift_doctrine`. An increase adds one mobilization and subtracts one legitimacy; a decrease subtracts one mobilization and adds one legitimacy. Both results clamp to the project-metric bound `0..100`.
+
+The helper returns new state and result objects, preserves unrelated state references, and appends mobilization and legitimacy `StateChange` entries after the doctrine-axis change. Each appended change targets the player project and cites the accepted player action as its cause. These fixed one-point deltas are intentionally minimal placeholder derivation, not a balance formula, axis-specific rule, or archetype-specific system.
 
 ## Constraints
 

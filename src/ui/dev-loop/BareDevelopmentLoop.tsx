@@ -19,10 +19,6 @@ export function BareDevelopmentLoop() {
   const firstAxis = gameState.playerProject.ideology.axes[0];
   const rival = gameState.rivalProjects[0];
   const actionOptions = createManualActionOptions(gameState);
-  const stateChange = turnResult?.changes[0];
-  const causalAction = stateChange?.causes.find(
-    (cause) => cause.kind === "action",
-  );
 
   function resolveAction(option: ManualActionOption) {
     const resolution = resolveManualActionOption(gameState, option);
@@ -105,22 +101,21 @@ export function BareDevelopmentLoop() {
               <dt>Accepted action kind</dt>
               <dd>{turnResult.acceptedPlayerAction.kind}</dd>
             </div>
-            <div>
-              <dt>Changed field</dt>
-              <dd>{stateChange?.field ?? "Unavailable"}</dd>
-            </div>
-            <div>
-              <dt>Before / after</dt>
-              <dd>
-                {stateChange === undefined
-                  ? "Unavailable"
-                  : `${stateChange.before} → ${stateChange.after}`}
-              </dd>
-            </div>
-            <div>
-              <dt>Causal action id</dt>
-              <dd>{causalAction?.id ?? "Unavailable"}</dd>
-            </div>
+            {turnResult.changes.map((change) => {
+              const causalAction = change.causes.find(
+                (cause) => cause.kind === "action",
+              );
+
+              return (
+                <div key={`${change.target.id}-${change.field}`}>
+                  <dt>{change.field}</dt>
+                  <dd>
+                    {change.before} → {change.after}; action:{" "}
+                    {causalAction?.id ?? "Unavailable"}
+                  </dd>
+                </div>
+              );
+            })}
           </dl>
         )}
       </section>

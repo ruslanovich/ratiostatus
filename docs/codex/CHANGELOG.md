@@ -1,5 +1,13 @@
 # Codex Changelog
 
+## 2026-06-22 — Minimal deterministic project metric derivation
+
+- Implemented `update_project_metrics` as a pure post-action phase for doctrine shifts, with placeholder one-point mobilization and inverse legitimacy changes clamped to `0..100`.
+- Appended action-caused mobilization and legitimacy entries after the existing doctrine-axis `StateChange` while leaving the direct doctrine resolver narrow.
+- Updated the bare development-loop result panel to render every core-returned change without calculating or predicting consequences in the UI.
+- Added focused increase, decrease, clamping, causality, direct-resolver isolation, no-op preservation, determinism, immutability, and validation coverage.
+- Documented the metric-only Task 3.3 scope and kept faction, contradiction, relation, rival, event, ending, and non-shift consequences deferred.
+
 ## 2026-06-22 — Manual development-loop action options
 
 - Replaced the single hardcoded doctrine-shift constructor with a pure state-derived manual action-option model containing enabled increase/decrease shifts and disabled institution/détente placeholders.

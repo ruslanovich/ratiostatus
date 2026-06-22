@@ -6,6 +6,7 @@ import {
 } from "../domain";
 import { TURN_PHASES, type TurnPhaseName } from "./phases";
 import { resolveDoctrineShift } from "./resolveDoctrineShift";
+import { updateProjectMetrics } from "./updateProjectMetrics";
 
 export interface TurnResolution {
   readonly state: GameState;
@@ -45,6 +46,11 @@ const applyPlayerAction: TurnPhase = (context) => {
 
 const preserveContext: TurnPhase = (context) => context;
 
+const deriveProjectMetrics: TurnPhase = (context) => ({
+  ...context,
+  ...updateProjectMetrics(context.state, requireResult(context)),
+});
+
 const validateOutput: TurnPhase = (context) => {
   assertValidGameState(context.state);
   assertValidTurnResult(requireResult(context));
@@ -54,7 +60,7 @@ const validateOutput: TurnPhase = (context) => {
 const PHASE_HANDLERS: Readonly<Record<TurnPhaseName, TurnPhase>> = {
   validate_input: validateInput,
   apply_player_action: applyPlayerAction,
-  update_project_metrics: preserveContext,
+  update_project_metrics: deriveProjectMetrics,
   update_factions: preserveContext,
   update_contradictions: preserveContext,
   update_external_relations: preserveContext,
