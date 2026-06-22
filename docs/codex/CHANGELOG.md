@@ -1,5 +1,9 @@
 # Codex Changelog
 
+## 2026-06-22 — Import-boundary test path correction
+
+- Moved the focused boundary regression suite to the standard, visible `tests/import-boundaries.test.ts` path.
+
 ## 2026-06-22 — Import-boundary enforcement correction
 
 - Added the exact `ai` package to the forbidden `game-core` dependency list.

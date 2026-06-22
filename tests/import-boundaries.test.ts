@@ -22,7 +22,10 @@ describe("game-core import boundaries", () => {
     ],
     ['import OpenAI from "openai";', "openai"],
     ['import axios from "axios";', "axios"],
-    ['export { fixture } from "../../content/minimal/fixture";', "../../content/minimal/fixture"],
+    [
+      'export { fixture } from "../../content/minimal/fixture";',
+      "../../content/minimal/fixture",
+    ],
     ['const view = await import("@/ui/dev-loop/view");', "@/ui/dev-loop/view"],
     ['const page = require("src/app/page");', "src/app/page"],
     ['import React = require("react");', "react"],
@@ -35,7 +38,7 @@ describe("game-core import boundaries", () => {
     );
 
     expect(violations).toHaveLength(1);
-    expect(violations[0].message).toContain(JSON.stringify(specifier));
+    expect(violations[0]?.message).toContain(JSON.stringify(specifier));
   });
 
   it.each(["window", "document", "fetch", "localStorage"])(
@@ -47,7 +50,7 @@ describe("game-core import boundaries", () => {
       );
 
       expect(violations).toHaveLength(1);
-      expect(violations[0].message).toContain(JSON.stringify(globalName));
+      expect(violations[0]?.message).toContain(JSON.stringify(globalName));
     },
   );
 
