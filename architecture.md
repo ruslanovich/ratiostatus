@@ -84,3 +84,22 @@ src/
 
 Persistence and deployment adapters should live outside `game-core` if introduced. Naming for the world, turn unit, rival entities, player polity, and UI labels remains provisional pending beta feedback.
 
+## Delivery sequence
+
+Implementation proceeds through small vertical slices while preserving the dependency boundaries above:
+
+```text
+developer scaffold
+  → domain contracts and validation
+  → one deterministic action and turn result
+  → minimal validated content
+  → bare manual playable slice
+  → complete headless rules and session
+  → content-backed systems and rivals
+  → Situation Room UI
+  → balancing and development deployment
+```
+
+The early bare playable slice is a boundary test, not a shortcut around the core: the UI submits a structured action and renders the returned result. Rule depth expands headlessly before visual polish. See `docs/product/EPICS.md`, `docs/product/MILESTONES.md`, and `docs/technical/IMPLEMENTATION_SEQUENCE.md` for the maintained plan.
+
+The optional LLM adapter has no implementation slot until the structured manual loop is validated and explicitly promoted. Supabase persistence has no MVP implementation slot.
