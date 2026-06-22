@@ -1,5 +1,10 @@
 # Codex Changelog
 
+## 2026-06-22 — Import-boundary enforcement correction
+
+- Added the exact `ai` package to the forbidden `game-core` dependency list.
+- Added focused regression coverage for `ai`, `@ai-sdk/openai`, and `@supabase/supabase-js` imports.
+
 ## 2026-06-22 — Import-boundary enforcement
 
 - Added a focused TypeScript-aware checker for forbidden imports and browser globals under `src/game-core/`.

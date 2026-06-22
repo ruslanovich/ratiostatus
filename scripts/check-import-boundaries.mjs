@@ -13,6 +13,7 @@ const FORBIDDEN_PACKAGE_PREFIXES = [
   "@anthropic-ai/",
   "@supabase/",
   "@vercel/",
+  "ai",
   "anthropic",
   "axios",
   "cross-fetch",

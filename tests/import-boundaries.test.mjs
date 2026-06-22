@@ -14,6 +14,12 @@ describe("game-core import boundaries", () => {
   it.each([
     ['import React from "react";', "react"],
     ['import router from "next/router";', "next/router"],
+    ['import { generateText } from "ai";', "ai"],
+    ['import { openai } from "@ai-sdk/openai";', "@ai-sdk/openai"],
+    [
+      'import { createClient } from "@supabase/supabase-js";',
+      "@supabase/supabase-js",
+    ],
     ['import OpenAI from "openai";', "openai"],
     ['import axios from "axios";', "axios"],
     ['export { fixture } from "../../content/minimal/fixture";', "../../content/minimal/fixture"],
