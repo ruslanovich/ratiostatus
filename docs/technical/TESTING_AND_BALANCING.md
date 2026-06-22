@@ -16,6 +16,8 @@ Focused runtime-boundary tests cover finite percentage and signed-percentage bou
 
 Doctrine-shift rule tests cover axis-ID selection, increase and decrease, clamping at both signed bounds, unknown-axis rejection, determinism, input non-mutation, and causal output. The ordered-pipeline suite confirms that structurally valid non-shift actions remain unsupported for consequence resolution.
 
+The manual action-option suite covers enabled increase/decrease generation from the first ideology axis, structural validation of every supported and disabled placeholder action, disabled reasons, missing-axis fallback behavior, successful public resolution in both directions, and the UI-level guarantee that disabled options do not invoke the resolver.
+
 ## Implemented ordered-pipeline coverage
 
 Task 3.2 tests the exact public `TURN_PHASES` order, equivalence between the turn entrypoint and the existing doctrine-shift resolver, equal-output determinism, input non-mutation, preservation through no-op phases, narrow rejection of unsupported actions, and output acceptance by the state and result validators. Later phase implementations must replace the relevant no-op while retaining order, causality, determinism, bounds, and non-mutation coverage.

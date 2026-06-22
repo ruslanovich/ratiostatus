@@ -80,27 +80,33 @@ This order decomposes the epics into small Codex-sized tasks. Task IDs identify 
 **Output:** Discriminated schemas, targets, parameters, and legality validation for all nine MVP action types.  
 **Do not do:** Put consequences in action payloads, add free-text parsing, or build final action-card visuals.
 
-## Task 5.2 — Implement doctrine, institution, and crisis actions
+## Task 5.2 — Add the manual action option model
 
 **Depends on:** Tasks 3.2 and 5.1.  
+**Output:** A small state-derived manual UI option contract with enabled doctrine-shift choices and structurally valid disabled placeholders for unsupported action kinds.
+**Do not do:** Add non-shift consequences, broad legality rules, a full action catalog UI, or final visual polish.
+
+## Task 5.3 — Implement doctrine, institution, and crisis actions
+
+**Depends on:** Tasks 3.2, 5.1, and 5.2.
 **Output:** Deterministic handlers and tests for doctrine shift, build/reform institution, and reinterpret crisis.  
 **Do not do:** Implement the remaining actions or bypass shared resolution phases.
 
-## Task 5.3 — Implement faction-directed actions
+## Task 5.4 — Implement faction-directed actions
 
-**Depends on:** Tasks 3.3, 5.1, and 5.2.  
+**Depends on:** Tasks 3.3, 5.1, and 5.3.
 **Output:** Deterministic handlers and tests for compromise, suppress faction, empower faction, and define enemy where internally targeted.  
 **Do not do:** Complete faction dynamics or encode UI messages in rules.
 
-## Task 5.4 — Implement external actions
+## Task 5.5 — Implement external actions
 
-**Depends on:** Tasks 3.3, 5.1, and 5.3.  
+**Depends on:** Tasks 3.3, 5.1, and 5.4.
 **Output:** Deterministic handlers and tests for export ideology, seek détente, and externally targeted define-enemy actions.  
 **Do not do:** Add rival AI, tactical war, or network behavior.
 
 ## Task 6.1 — Add bounded faction dynamics
 
-**Depends on:** Tasks 3.3 and 5.3.  
+**Depends on:** Tasks 3.3 and 5.4.
 **Output:** Power, support, loyalty, visibility, and radicalization updates with explicit bounds and causal explanations.  
 **Do not do:** Add leaders, full parliament simulation, or unbounded metric coupling.
 
@@ -112,7 +118,7 @@ This order decomposes the epics into small Codex-sized tasks. Task IDs identify 
 
 ## Task 7.1 — Define deterministic rival decision policy
 
-**Depends on:** Tasks 4.3 and 5.4.  
+**Depends on:** Tasks 4.3 and 5.5.
 **Output:** Explainable scoring/priority policy that selects a legal structured `AIAction`, with tie-breaking and determinism tests.  
 **Do not do:** Use an LLM, hidden randomness, or direct state mutation.
 
@@ -136,7 +142,7 @@ This order decomposes the epics into small Codex-sized tasks. Task IDs identify 
 
 ## Task 9.3 — Complete session lifecycle and endings
 
-**Depends on:** Tasks 5.4, 7.2, and 8.2.  
+**Depends on:** Tasks 5.5, 7.2, and 8.2.
 **Output:** Archetype selection, three-rival initialization, 10–12 turn progression, deterministic ending evaluation, in-memory restart, and end-to-end tests.  
 **Do not do:** Add save/load/replay, authentication, persistence, or multiplayer.
 

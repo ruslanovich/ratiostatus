@@ -88,3 +88,24 @@ body {
   cursor: default;
   opacity: 0.55;
 }
+
+.action-options,
+.action-option {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.action-option {
+  padding-top: 0.75rem;
+  border-top: 1px solid #353b48;
+}
+
+.action-option:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.disabled-reason {
+  color: #c6a8a8;
+  font-size: 0.85rem;
+}

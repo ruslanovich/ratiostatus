@@ -1,5 +1,13 @@
 # Codex Changelog
 
+## 2026-06-22 — Manual development-loop action options
+
+- Replaced the single hardcoded doctrine-shift constructor with a pure state-derived manual action-option model containing enabled increase/decrease shifts and disabled institution/détente placeholders.
+- Kept every option structurally valid, made missing-axis shifts explicitly unavailable, and added a UI resolver gate that cannot submit disabled options.
+- Updated the bare development loop to render option labels, descriptions, disabled reasons, and one-shot enabled controls while preserving its core-returned debug result panel.
+- Added focused option-generation, validation, missing-axis, bidirectional resolution, and disabled-submission tests without adding non-shift consequences or browser test infrastructure.
+- Aligned the implementation sequence so this assigned UI contract is Task 5.2 and deferred consequence handlers remain later Epic 5 tasks.
+
 ## 2026-06-22 — Detailed player action schemas
 
 - Replaced generic optional action intensity with a nine-kind discriminated action catalog and required kind-specific parameter objects for player and rival structured actions.
