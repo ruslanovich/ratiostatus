@@ -72,6 +72,7 @@ src/
     factions/
     endings/
   ui/
+    dev-loop/
     components/
     screens/
     state/
@@ -107,9 +108,10 @@ The optional LLM adapter has no implementation slot until the structured manual 
 
 ## Current implementation
 
-- `src/app/` contains only the early-development Next.js placeholder.
+- `src/app/` mounts the Task 9.1 bare development loop as the application page.
+- `src/ui/dev-loop/` contains the one-shot client view and pure structured-action constructor. It initializes content through the content boundary, calls the public doctrine-shift resolver, and renders only core-returned consequences.
 - `src/game-core/domain/` contains framework-independent TypeScript domain declarations. It has no rules, runtime validation, content, UI, or infrastructure dependencies.
 - `src/game-core/simulation/` contains the pure Task 3.1 doctrine-shift resolver. It resolves only the first player ideology axis and is not a general turn pipeline.
 - `src/content/minimal/` contains the Task 4.1 provisional archetype and rival configuration, local replaceable validation, and the initializer for one legal resolver-ready `GameState`. Content imports core domain types; `game-core` does not import content.
 
-All other folders in the planned layout remain deferred until their scoped tasks. The catalog-oriented `content` subfolders shown above remain planned; only `content/minimal` currently exists.
+All other folders in the planned layout remain deferred until their scoped tasks. The catalog-oriented `content` subfolders shown above remain planned; only `content/minimal` currently exists. The other planned `ui` folders also remain deferred; Task 9.1 adds only `ui/dev-loop`.

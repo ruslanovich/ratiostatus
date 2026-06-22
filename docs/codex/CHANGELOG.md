@@ -1,5 +1,12 @@
 # Codex Changelog
 
+## 2026-06-22 — Bare playable development loop
+
+- Replaced the placeholder page with a one-shot client development view that initializes the minimal validated fixture.
+- Added one structured doctrine-shift trigger wired directly to the existing deterministic resolver and rendered the returned state and causal `TurnResult` in compact debug panels.
+- Added a pure structured-action constructor and focused unit test without introducing a browser-oriented component-test environment.
+- Documented the UI-to-core boundary, current folder structure, and the slice's explicit limitations; the gameplay MVP remains unimplemented.
+
 ## 2026-06-22 — Minimal validated content fixture
 
 - Added a separate `src/content/minimal/` area with exactly one provisional abstract playable archetype and one provisional abstract rival profile.

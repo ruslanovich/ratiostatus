@@ -1,6 +1,8 @@
 :root {
-  color-scheme: light dark;
+  color-scheme: dark;
   font-family: system-ui, sans-serif;
+  background: #111318;
+  color: #eceef3;
 }
 
 * {
@@ -11,16 +13,78 @@ body {
   margin: 0;
 }
 
-main {
+.dev-loop {
   display: grid;
   min-height: 100vh;
-  place-content: center;
-  gap: 0.75rem;
+  align-content: center;
+  gap: 1rem;
+  width: min(100%, 48rem);
+  margin: 0 auto;
   padding: 2rem;
-  text-align: center;
 }
 
-h1,
-p {
+.dev-loop h1,
+.dev-loop h2,
+.dev-loop p,
+.dev-loop dl,
+.dev-loop dd {
   margin: 0;
+}
+
+.dev-loop header {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.eyebrow,
+.dev-loop dt {
+  color: #aeb5c4;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.debug-panel {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid #353b48;
+  border-radius: 0.4rem;
+  background: #191c23;
+}
+
+.debug-panel h2 {
+  font-size: 1rem;
+}
+
+.debug-panel dl {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.debug-panel dl div {
+  display: grid;
+  grid-template-columns: minmax(9rem, 0.4fr) minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.debug-panel dd {
+  overflow-wrap: anywhere;
+  font-family: ui-monospace, monospace;
+}
+
+.dev-loop button {
+  justify-self: start;
+  padding: 0.7rem 1rem;
+  border: 1px solid #8296c8;
+  border-radius: 0.35rem;
+  background: #283656;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+}
+
+.dev-loop button:disabled {
+  cursor: default;
+  opacity: 0.55;
 }
