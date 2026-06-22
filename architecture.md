@@ -111,9 +111,9 @@ The optional LLM adapter has no implementation slot until the structured manual 
 ## Current implementation
 
 - `src/app/` mounts the Task 9.1 bare development loop as the application page.
-- `src/ui/dev-loop/` contains the one-shot client view and pure structured-action constructor. It initializes content through the content boundary, calls the public doctrine-shift resolver, and renders only core-returned consequences.
+- `src/ui/dev-loop/` contains the one-shot client view and pure structured-action constructor. It initializes content through the content boundary, calls the public ordered turn resolver, and renders only core-returned consequences.
 - `src/game-core/domain/` contains framework-independent TypeScript domain declarations and the Task 2.2 runtime boundary validators for numeric bounds, stable IDs, projects, state, actions, and turn results. It has no content, UI, or infrastructure dependencies.
-- `src/game-core/simulation/` contains the pure Task 3.1 doctrine-shift resolver. It validates its state/action inputs and state/result outputs, resolves only the first player ideology axis, and is not a general turn pipeline.
+- `src/game-core/simulation/` contains the pure Task 3.1 doctrine-shift rule and the Task 3.2 public `resolveTurn` pipeline. The fixed phase tuple makes validation, player action, metrics, factions, contradictions, external relations, rivals, events, output validation, ending checks, and result assembly explicit; only input/output validation and doctrine shift currently perform work.
 - `src/content/minimal/` contains the Task 4.1 provisional archetype and rival configuration, content-specific validation, and the initializer for one core-validated resolver-ready `GameState`. Content imports core contracts and validators; `game-core` does not import content.
 - `scripts/check-import-boundaries.mjs` enforces the inward dependency rule for all TypeScript and TSX files under `src/game-core/` as part of the baseline checks.
 

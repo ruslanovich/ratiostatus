@@ -14,6 +14,10 @@
 
 Task 2.2 adds focused runtime-boundary tests for finite percentage and signed-percentage bounds, integer turn ranges, stable-ID namespaces, state turn invariants, project roles and ideology requirements, action kinds and actor matching, and bounded turn-result changes. Existing content and deterministic doctrine-shift suites exercise the same validators through initial-state construction and resolver input/output validation. These are invariant tests, not balancing formula tests.
 
+## Implemented ordered-pipeline coverage
+
+Task 3.2 tests the exact public `TURN_PHASES` order, equivalence between the turn entrypoint and the existing doctrine-shift resolver, equal-output determinism, input non-mutation, preservation through no-op phases, narrow rejection of unsupported actions, and output acceptance by the state and result validators. Later phase implementations must replace the relevant no-op while retaining order, causality, determinism, bounds, and non-mutation coverage.
+
 ## Future simulation harness
 
 The repository should eventually support headless full-game simulation. It should record ending distribution, dominant strategies, dead actions, unreachable content, metric saturation, contradiction trajectories, and turn-level invariant violations. Balancing should use many automated games in addition to human playtests.

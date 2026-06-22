@@ -1,7 +1,15 @@
 import { describe, expect, it } from "vitest";
 
 import type { AIAction, GameState, PlayerAction } from "../src/game-core/domain";
-import { resolveDoctrineShift } from "../src/game-core/simulation";
+import {
+  assertValidGameState,
+  assertValidTurnResult,
+} from "../src/game-core/domain";
+import {
+  resolveDoctrineShift,
+  resolveTurn,
+  TURN_PHASES,
+} from "../src/game-core/simulation";
 
 function createState(position = 10): GameState {
   return {
@@ -160,5 +168,75 @@ describe("resolveDoctrineShift", () => {
         causes: [{ kind: "action", id: action.id }],
       },
     ]);
+  });
+});
+
+describe("ordered turn pipeline", () => {
+  it("exposes the documented phase order", () => {
+    expect(TURN_PHASES).toEqual([
+      "validate_input",
+      "apply_player_action",
+      "update_project_metrics",
+      "update_factions",
+      "update_contradictions",
+      "update_external_relations",
+      "select_rival_actions",
+      "generate_events",
+      "validate_output",
+      "check_ending",
+      "build_turn_result",
+    ]);
+  });
+
+  it("resolves shift_doctrine with the existing effective output", () => {
+    const state = createState();
+    const action = createAction();
+
+    expect(resolveTurn(state, action)).toEqual(resolveDoctrineShift(state, action));
+  });
+
+  it("returns deeply equal output for equal input", () => {
+    expect(resolveTurn(createState(), createAction())).toEqual(
+      resolveTurn(createState(), createAction()),
+    );
+  });
+
+  it("does not mutate input state", () => {
+    const input = createState();
+    const snapshot = structuredClone(input);
+
+    resolveTurn(input, createAction());
+
+    expect(input).toEqual(snapshot);
+  });
+
+  it("preserves state outside the implemented action phase", () => {
+    const input = createState();
+    const { state, result } = resolveTurn(input, createAction());
+
+    expect(state.playerProject.metrics).toBe(input.playerProject.metrics);
+    expect(state.playerProject.factions).toBe(input.playerProject.factions);
+    expect(state.playerProject.contradictions).toBe(
+      input.playerProject.contradictions,
+    );
+    expect(state.playerProject.relations).toBe(input.playerProject.relations);
+    expect(state.rivalProjects).toBe(input.rivalProjects);
+    expect(state.activeEventIds).toBe(input.activeEventIds);
+    expect(result.aiActions).toEqual([]);
+    expect(result.events).toEqual([]);
+    expect(result.ending).toBe(input.ending);
+  });
+
+  it("rejects unsupported actions", () => {
+    expect(() =>
+      resolveTurn(createState(), createAction({ kind: "build_institution" })),
+    ).toThrow("only supports shift_doctrine");
+  });
+
+  it("returns state and result accepted by the boundary validators", () => {
+    const { state, result } = resolveTurn(createState(), createAction());
+
+    expect(() => assertValidGameState(state)).not.toThrow();
+    expect(() => assertValidTurnResult(result)).not.toThrow();
   });
 });

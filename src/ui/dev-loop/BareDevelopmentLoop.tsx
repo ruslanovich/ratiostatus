@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import { createMinimalInitialGameState } from "../../content";
 import type { GameState, TurnResult } from "../../game-core/domain";
-import { resolveDoctrineShift } from "../../game-core/simulation";
+import { resolveTurn } from "../../game-core/simulation";
 import { createDoctrineShiftAction } from "./createDoctrineShiftAction";
 
 export function BareDevelopmentLoop() {
@@ -22,7 +22,7 @@ export function BareDevelopmentLoop() {
 
   function resolveAction() {
     const action = createDoctrineShiftAction(gameState);
-    const resolution = resolveDoctrineShift(gameState, action);
+    const resolution = resolveTurn(gameState, action);
 
     setGameState(resolution.state);
     setTurnResult(resolution.result);

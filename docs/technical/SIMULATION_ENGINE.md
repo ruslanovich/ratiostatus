@@ -2,20 +2,25 @@
 
 The simulation engine will be a pure, deterministic turn resolver. Given a valid prior `GameState`, validated content, and structured actions, it returns a new state and `TurnResult` without reading external mutable state.
 
-## Intended turn sequence
+## Implemented ordered turn sequence
 
-1. Validate and apply the player action.
-2. Update the player's ideology profile.
-3. Update institutions and their effects.
-4. Update faction influence, alignment, conflict, and response.
-5. Update contradictions and their pressure.
-6. Update external relations and ideological influence.
-7. Select and resolve deterministic AI actions for rival projects.
-8. Generate eligible state-driven events.
-9. Recalculate bounded metrics and validate the resulting state.
-10. Check ending conditions and construct the turn result.
+`src/game-core/simulation/phases.ts` defines the authoritative phase order:
 
-The exact order is a future rules decision. Once implemented, it must be explicit and covered by tests because ordering can change outcomes.
+1. `validate_input`
+2. `apply_player_action`
+3. `update_project_metrics`
+4. `update_factions`
+5. `update_contradictions`
+6. `update_external_relations`
+7. `select_rival_actions`
+8. `generate_events`
+9. `validate_output`
+10. `check_ending`
+11. `build_turn_result`
+
+`resolveTurn` executes a typed handler for every phase in this order. Input validation asserts the `GameState` and player action. The action phase currently delegates only `shift_doctrine` to `resolveDoctrineShift`. Output validation asserts the resulting state and turn result. Project metrics, factions, contradictions, external relations, rival actions, events, ending checks, and final result assembly are explicit context-preserving no-ops. The doctrine-shift delegate currently constructs the thin-slice result, so `build_turn_result` remains a no-op until later action composition requires shared assembly.
+
+The order is part of the public simulation contract through `TURN_PHASES` and is covered by tests. Future rules must fill the named phase adapters without bypassing or dynamically reordering this pipeline.
 
 ## Implemented Task 3.1 slice
 
@@ -23,7 +28,9 @@ The exact order is a future rules decision. Once implemented, it must be explici
 
 The deterministic result identifier is derived from the game id, resulting turn number, and action id and normalized to the stable-ID kebab-case payload format. The resolver creates new state, project, ideology, axes, and history objects while preserving unrelated fields. It rejects other action kinds, non-player actor roles, actor-project mismatches, and player projects without an ideology axis.
 
-The current `PlayerAction.intensity` contract is an unsigned `Percentage` (`0..100`), so this slice supports movement only toward the positive bound. Negative doctrine movement and axis selection require the later per-action schema work; no lower-bound movement is introduced here. The resolver now asserts the input `GameState` and `PlayerAction` before calculation and the returned `GameState` and `TurnResult` before returning. This function is not a general resolver or full turn pipeline and does not update rivals, events, factions, institutions, contradictions, relations, metrics, or endings.
+The current `PlayerAction.intensity` contract is an unsigned `Percentage` (`0..100`), so this slice supports movement only toward the positive bound. Negative doctrine movement and axis selection require the later per-action schema work; no lower-bound movement is introduced here. The resolver now asserts the input `GameState` and `PlayerAction` before calculation and the returned `GameState` and `TurnResult` before returning.
+
+The public `resolveTurn` entrypoint routes this behavior through the ordered pipeline and rejects all other action kinds. Direct `resolveDoctrineShift` remains available as the narrow rule resolver and retains its validation. Neither entrypoint updates rivals, events, factions, institutions, contradictions, relations, metrics, or endings.
 
 ## Constraints
 

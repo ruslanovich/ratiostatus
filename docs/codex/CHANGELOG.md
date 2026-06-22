@@ -1,5 +1,12 @@
 # Codex Changelog
 
+## 2026-06-22 — Ordered turn phases
+
+- Added a fixed, typed eleven-phase turn sequence and a pure `resolveTurn` entrypoint that executes every phase in order.
+- Routed the existing doctrine-shift behavior through the player-action phase while keeping future metrics, factions, contradictions, relations, rivals, events, endings, and result-assembly phases as explicit no-ops.
+- Updated the bare development loop to call the shared turn entrypoint and added focused ordering, equivalence, determinism, non-mutation, no-op preservation, rejection, and validation tests.
+- Documented the implemented pipeline, current no-op phases, public simulation boundary, and testing obligations without adding gameplay rules.
+
 ## 2026-06-22 — Domain validation and numeric bounds
 
 - Added public runtime assertions for stable ID format, percentage and signed-percentage bounds, turn ranges, projects, game state, player actions, and turn results.
