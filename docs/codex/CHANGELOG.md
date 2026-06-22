@@ -1,5 +1,12 @@
 # Codex Changelog
 
+## 2026-06-22 — Scripted ten-turn headless session
+
+- Added a pure content-independent session runner that validates an initial state, applies ordered player actions through `resolveTurn`, and returns the initial state, final state, and ordered turn results without mutating inputs.
+- Added a minimal-content helper with ten stable magnitude-10 doctrine shifts that completes at turn ten with exact ordered history references.
+- Added deterministic, immutability, validation, resolver-error propagation, per-turn causal-change, sequential-turn, and final-state regression coverage.
+- Documented the new core session boundary and content-owned fixture while keeping non-shift consequences, rival actions, events, endings, persistence, UI lifecycle, and balancing deferred.
+
 ## 2026-06-22 — Minimal deterministic project metric derivation
 
 - Implemented `update_project_metrics` as a pure post-action phase for doctrine shifts, with placeholder one-point mobilization and inverse legitimacy changes clamped to `0..100`.

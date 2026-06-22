@@ -24,7 +24,13 @@ Task 3.2 tests the exact public `TURN_PHASES` order, equal-output determinism, i
 
 Task 3.3 adds focused coverage for the implemented project-metric phase: doctrine increases derive mobilization `+1` and legitimacy `-1`; decreases derive the inverse; both metrics clamp to `0..100`; both causal changes are appended after the doctrine-axis change and reference the player action. Tests also verify that direct `resolveDoctrineShift` remains metric-free, all other state-system phases preserve factions, contradictions, relations, rivals, events, and endings, and pipeline output passes existing validators. These assertions cover the placeholder deltas only and are not balancing tests.
 
-## Future simulation harness
+## Implemented scripted-session coverage
+
+Task 9.2 adds a deterministic ten-turn regression over the generic headless session runner and minimal content helper. Coverage asserts ordered result collection, turns 1–10, exact history/result-ID correspondence, valid final state and turn results, identical output for identical inputs, initial-state and action-list non-mutation, existing doctrine and metric changes on every result, and propagation of invalid-actor, unsupported-action, and invalid-initial-state failures.
+
+This is a single artificial scripted sequence proving the session substrate. It is not a balance runner, multi-game simulator, representative strategy suite, ending test, or replacement for later scripted-game and human playtest coverage.
+
+## Future balancing harness
 
 The repository should eventually support headless full-game simulation. It should record ending distribution, dominant strategies, dead actions, unreachable content, metric saturation, contradiction trajectories, and turn-level invariant violations. Balancing should use many automated games in addition to human playtests.
 

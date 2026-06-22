@@ -38,6 +38,12 @@ The public `resolveTurn` entrypoint routes this behavior through the ordered pip
 
 The helper returns new state and result objects, preserves unrelated state references, and appends mobilization and legitimacy `StateChange` entries after the doctrine-axis change. Each appended change targets the player project and cites the accepted player action as its cause. These fixed one-point deltas are intentionally minimal placeholder derivation, not a balance formula, axis-specific rule, or archetype-specific system.
 
+## Implemented headless scripted session
+
+`src/game-core/session/runScriptedSession.ts` provides a generic, synchronous in-memory runner. It validates the supplied initial `GameState`, validates each action against the current player project, sends every action through the public `resolveTurn` pipeline, and collects each returned `TurnResult` in order. It returns the original initial-state reference, the final resolved state, and the ordered results without mutating the initial state or action list.
+
+The core runner has no content knowledge. `src/content/minimal/scriptedSession.ts` owns the current fixture-specific proof: ten stable, magnitude-10 `shift_doctrine` actions against the minimal player's first ideology axis. The helper starts at turn zero and completes at turn ten with ten matching history references. Only `shift_doctrine` is supported. Factions, contradictions, external relations, rival actions, events, endings, and shared result finalization remain no-op or deferred phases, and the scripted proof does not add a complete session lifecycle.
+
 ## Constraints
 
 - The engine must not call an LLM.
