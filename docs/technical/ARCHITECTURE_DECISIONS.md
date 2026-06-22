@@ -44,3 +44,10 @@ These ADR-style records capture accepted constraints. Amend or supersede a recor
 **Decision:** Every change that affects architecture, domain concepts, game rules, content schemas, UI behavior, LLM contracts, or product scope must update the relevant harness docs and changelog in the same task.  
 **Reason:** Future Codex work needs a current, explicit source of truth rather than inferred architecture.
 
+## ADR-008: Initial web toolchain
+
+**Status:** Accepted
+
+**Decision:** The application scaffold uses the Next.js App Router with React and strict TypeScript under `src/app`. npm and its lockfile define dependency installation, ESLint provides static linting, and Vitest provides environment-neutral unit tests.
+
+**Reason:** This is the smallest Vercel-compatible baseline that supplies explicit development, lint, type-check, test, and production-build commands without introducing gameplay or external services.

@@ -4,7 +4,7 @@ Ratio Status is a planned single-player ideological strategy game in a fully abs
 
 ## Repository status
 
-This repository currently contains the product, architecture, and Codex operating harness. Gameplay implementation has not started. There is no application scaffold, LLM integration, Supabase integration, authentication, persistence, or deployment automation.
+This repository contains a minimal Next.js and TypeScript application scaffold plus the product, architecture, and Codex operating harness. The application displays an early-development placeholder; gameplay implementation has not started. There is no game state, domain model, simulation, LLM integration, Supabase integration, authentication, persistence, or deployment automation.
 
 The MVP is planned as a manual-first, 10–12 turn session with predefined archetypes, three evolving AI rival projects, structured actions, deterministic simulation, state-driven events, and ending states. The game will not use real countries, leaders, parties, geography, or direct modern geopolitical mappings.
 
@@ -16,6 +16,35 @@ The MVP is planned as a manual-first, 10–12 turn session with predefined arche
 - Production may later move to a rented VPC, but that migration is outside MVP scope.
 - Supabase is approved for possible future persistence, authentication, or user data needs, but is deferred until explicitly required.
 - An LLM may later provide an optional structured language adapter. Core gameplay must work without one.
+
+## Local development
+
+Prerequisites: Node.js 20.9 or newer and npm.
+
+Install the locked dependencies:
+
+```sh
+npm ci
+```
+
+Start the local development server:
+
+```sh
+npm run dev
+```
+
+The application is then available at the local URL printed by Next.js.
+
+## Verification
+
+Run each baseline check independently:
+
+```sh
+npm run lint
+npm run typecheck
+npm test
+npm run build
+```
 
 ## Documentation
 
