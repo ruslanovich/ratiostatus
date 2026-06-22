@@ -4,7 +4,7 @@ Ratio Status is a planned single-player ideological strategy game in a fully abs
 
 ## Repository status
 
-This repository contains a minimal Next.js and TypeScript application scaffold plus the product, architecture, and Codex operating harness. The application displays an early-development placeholder; gameplay implementation has not started. There is no game state, domain model, simulation, LLM integration, Supabase integration, authentication, persistence, or deployment automation.
+This repository contains a minimal Next.js and TypeScript application scaffold, framework-independent game-core domain type skeletons, and the product, architecture, and Codex operating harness. The application displays an early-development placeholder; gameplay implementation has not started. The domain skeleton defines compile-time vocabulary only: there is no runtime validation, simulation, LLM integration, Supabase integration, authentication, persistence, or deployment automation.
 
 The MVP is planned as a manual-first, 10–12 turn session with predefined archetypes, three evolving AI rival projects, structured actions, deterministic simulation, state-driven events, and ending states. The game will not use real countries, leaders, parties, geography, or direct modern geopolitical mappings.
 

@@ -103,3 +103,10 @@ developer scaffold
 The early bare playable slice is a boundary test, not a shortcut around the core: the UI submits a structured action and renders the returned result. Rule depth expands headlessly before visual polish. See `docs/product/EPICS.md`, `docs/product/MILESTONES.md`, and `docs/technical/IMPLEMENTATION_SEQUENCE.md` for the maintained plan.
 
 The optional LLM adapter has no implementation slot until the structured manual loop is validated and explicitly promoted. Supabase persistence has no MVP implementation slot.
+
+## Current implementation
+
+- `src/app/` contains only the early-development Next.js placeholder.
+- `src/game-core/domain/` contains framework-independent TypeScript domain declarations. It has no rules, runtime validation, content, UI, or infrastructure dependencies.
+
+All other folders in the planned layout remain deferred until their scoped tasks.
