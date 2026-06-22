@@ -17,6 +17,14 @@ The simulation engine will be a pure, deterministic turn resolver. Given a valid
 
 The exact order is a future rules decision. Once implemented, it must be explicit and covered by tests because ordering can change outcomes.
 
+## Implemented Task 3.1 slice
+
+`src/game-core/simulation/resolveDoctrineShift.ts` implements the first narrow simulation boundary. `resolveDoctrineShift` accepts a `GameState` and a player `shift_doctrine` action, then moves the first ideology axis on the player project toward `100`. It uses the action's `Percentage` intensity or a fixed default of `10`, clamps the result to `100`, increments the turn, appends a deterministic `TurnResultId` to history, and returns one causal `StateChange` with the action as its cause.
+
+The deterministic result identifier is derived from the game id, resulting turn number, and action id. The resolver creates new state, project, ideology, axes, and history objects while preserving unrelated fields. It rejects other action kinds, non-player actor roles, actor-project mismatches, and player projects without an ideology axis.
+
+The current `PlayerAction.intensity` contract is an unsigned `Percentage` (`0..100`), so this slice supports movement only toward the positive bound. Negative doctrine movement and axis selection require the later per-action schema work; no lower-bound movement is introduced here. Runtime validation of intensity and turn bounds remains Task 2.2 work. This function is not a general resolver or full turn pipeline and does not update rivals, events, factions, institutions, contradictions, relations, metrics, or endings.
+
 ## Constraints
 
 - The engine must not call an LLM.
@@ -26,4 +34,3 @@ The exact order is a future rules decision. Once implemented, it must be explici
 - Numeric values must be bounded, and invalid intermediate or final states must fail through explicit validation.
 - Turn results should expose causal changes without leaking UI formatting into the core.
 - Rival actions and event eligibility must be derived from state and documented rules; MVP excludes global random shocks.
-

@@ -1,5 +1,12 @@
 # Codex Changelog
 
+## 2026-06-22 — Minimal deterministic doctrine shift
+
+- Added a pure `shift_doctrine` resolver that immutably updates the first player ideology axis, clamps it to the positive bound, advances the turn, and appends a deterministic result reference to history.
+- Added a structured `TurnResult` with one causal `StateChange` and narrow errors for unsupported actions, invalid actors, mismatched projects, and missing player ideology axes.
+- Added focused tests for resolution, default intensity, immutability, repeatability, clamping, invalid inputs, and causal output.
+- Documented the implemented simulation slice, its one-directional unsigned intensity assumption, and its deferred validation and pipeline limitations.
+
 ## 2026-06-22 — Core domain model skeleton
 
 - Added framework-independent readonly TypeScript declarations for game state, projects, archetypes, ideology, institutions, factions, contradictions, external relations, rivals, structured actions, events, turn results, and endings.

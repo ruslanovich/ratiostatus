@@ -108,5 +108,6 @@ The optional LLM adapter has no implementation slot until the structured manual 
 
 - `src/app/` contains only the early-development Next.js placeholder.
 - `src/game-core/domain/` contains framework-independent TypeScript domain declarations. It has no rules, runtime validation, content, UI, or infrastructure dependencies.
+- `src/game-core/simulation/` contains the pure Task 3.1 doctrine-shift resolver. It resolves only the first player ideology axis and is not a general turn pipeline.
 
 All other folders in the planned layout remain deferred until their scoped tasks.
