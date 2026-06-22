@@ -1,5 +1,13 @@
 # Codex Changelog
 
+## 2026-06-22 — Minimal validated content fixture
+
+- Added a separate `src/content/minimal/` area with exactly one provisional abstract playable archetype and one provisional abstract rival profile.
+- Added small local validation for stable identifier namespaces, roles, required references, and documented numeric bounds.
+- Added a validated `createMinimalInitialGameState()` initializer compatible with the existing doctrine-shift resolver.
+- Added focused valid-content, invalid-content, state-initialization, stable-ID, and resolver-integration tests.
+- Documented the implemented content boundary, temporary single-archetype rival origin, and deferred full schemas and catalogs.
+
 ## 2026-06-22 — Minimal deterministic doctrine shift
 
 - Added a pure `shift_doctrine` resolver that immutably updates the first player ideology axis, clamps it to the positive bound, advances the turn, and appends a deterministic result reference to history.

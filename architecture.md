@@ -66,6 +66,7 @@ src/
     events/
     scoring/
   content/
+    minimal/
     archetypes/
     events/
     factions/
@@ -109,5 +110,6 @@ The optional LLM adapter has no implementation slot until the structured manual 
 - `src/app/` contains only the early-development Next.js placeholder.
 - `src/game-core/domain/` contains framework-independent TypeScript domain declarations. It has no rules, runtime validation, content, UI, or infrastructure dependencies.
 - `src/game-core/simulation/` contains the pure Task 3.1 doctrine-shift resolver. It resolves only the first player ideology axis and is not a general turn pipeline.
+- `src/content/minimal/` contains the Task 4.1 provisional archetype and rival configuration, local replaceable validation, and the initializer for one legal resolver-ready `GameState`. Content imports core domain types; `game-core` does not import content.
 
-All other folders in the planned layout remain deferred until their scoped tasks.
+All other folders in the planned layout remain deferred until their scoped tasks. The catalog-oriented `content` subfolders shown above remain planned; only `content/minimal` currently exists.
